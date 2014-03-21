@@ -1,0 +1,117 @@
+//
+// Bootstrap
+//==============
+
+@import "bootstrap/bootstrap";
+
+//
+// Popup styles
+//==============
+
+body {
+	min-width: 775px;
+	padding: 10px;
+}
+
+.type {
+	h3 {
+		line-height: 48px;
+		padding-left: 55px;
+		border-bottom: 1px solid #ddd;
+	}
+}
+
+.item {
+
+	&:hover {
+		background-color: #E7F7FD;
+	}
+
+	padding: 10px;
+	display: flex;
+
+	.details {
+		padding: 0px 10px;
+		flex: 1;
+		font-size: 12px;
+
+		h4 {
+			margin: 0px;
+			// version
+			.version {
+				font-size: 15px;
+				color: #888;
+				margin: 0px 10px;
+			}
+		}
+
+		.description {
+			margin: 5px 0px;
+			color: #888;
+		}
+
+		.additional {
+			label {
+				margin-right: 5px;
+			}
+			span {
+				margin-right: 10px;
+				&.glyphicon {
+					margin-right: 0px;
+				}
+			}
+		}
+
+	}
+
+	.actions {
+		.btn {
+			display: block;
+			width: 100%;
+			&.btn-xs {
+				padding: 2px 5px;
+			}
+		}
+		.uninstall {
+			.btn {
+				margin-bottom: 3px;
+			}
+		}
+	}
+
+	.icon {
+		width: 48px;
+		img {
+			width: 48px;
+			height: 48px;
+		}
+	}
+
+	&.item-disabled {
+
+		color: #bbb;
+
+		.description, h4 .version {
+			color: #bbb;
+		}
+
+		.checkbox {
+			font-weight: normal;
+			color: #000;
+		}
+
+	}
+
+}
+
+#history {
+
+	select {
+		margin: 15px 0px;
+	}
+
+	th, td {
+		font-size: 12px;
+	}
+
+}

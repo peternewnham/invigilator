@@ -1,0 +1,12 @@
+{
+
+	"extName": {
+		"message": "Invigilator",
+		"description": "Extension name"
+	},
+	"extDescription": {
+		"message": "Monitors extensions and warns you when permissions are updated",
+		"description": "Extension description"
+	}
+
+}

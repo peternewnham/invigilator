@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Invigilator</title>
+	<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+<header>
+	<div id="shortcuts" class="pull-right">
+		<p>
+			<a href="https://chrome.google.com/webstore/category/extensions" class="btn btn-primary btn-xs">
+				Open Chrome Webstore
+				<span class="glyphicon glyphicon-new-window"></span>
+			</a>
+		</p>
+		<p>
+			<a href="chrome://extensions/" class="btn btn-info btn-xs">Extensions Tab</a>
+			<a href="chrome://apps/" class="btn btn-info btn-xs">Apps Tab</a>
+		</p>
+	</div>
+	<h1>
+		<img src="icons/icon48.png">
+		Invigilator
+	</h1>
+</header>
+
+<ul class="nav nav-tabs">
+	<li class="active"><a href="#installed" data-toggle="tab">Installed Extensions</a></li>
+	<li><a href="#uninstalled" data-toggle="tab">Uninstalled Extensions</a></li>
+	<li><a href="#history" data-toggle="tab">History</a></li>
+	<li><a href="#about" data-toggle="tab">About</a></li>
+</ul>
+
+<div class="tab-content">
+	<div class="tab-pane active" id="installed"></div>
+	<div class="tab-pane" id="uninstalled"></div>
+	<div class="tab-pane" id="history"></div>
+	<div class="tab-pane" id="about">
+		<h2>About Invigilator</h2>
+		<p>Invigilator is an extension management and notficiation system.</p>
+	</div>
+</div>
+
+<script type="text/javascript" src="vendor/jquery.js"></script>
+<script type="text/javascript" src="vendor/bootstrap.js"></script>
+<script type="text/javascript" src="vendor/moment.js"></script>
+<script type="text/javascript" src="popup.js"></script>
+
+</body>
+</html>
