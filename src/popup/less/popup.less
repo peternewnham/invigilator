@@ -30,6 +30,12 @@ h1 {
 	}
 }
 
+.label {
+	display: inline-block;
+	margin-top: 5px;
+	font-size: 100%;
+}
+
 .item {
 
 	&:hover {
@@ -107,8 +113,19 @@ h1 {
 		.checkbox {
 			font-weight: normal;
 			color: #000;
+
+			&.disabled {
+				color: #aaa;
+			}
+
 		}
 
+	}
+
+	label {
+		&.disabled {
+			color: #aaa;
+		}
 	}
 
 }

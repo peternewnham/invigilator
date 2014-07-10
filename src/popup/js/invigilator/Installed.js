@@ -171,6 +171,11 @@
 			// name + version
 			itemHtml += '<h4>' + item.name + ' <span class="version">' + item.version + '</span></h4>';
 
+			// disable warning
+			if (!item.mayDisable) {
+				itemHtml += '<span class="label label-warning"><span class="glyphicon glyphicon-exclamation-sign"></span> User management has been disabled for this item.</span>';
+			}
+
 			// description
 			itemHtml += '<p class="description">' + item.description + '</p>';
 
@@ -271,29 +276,35 @@
 			itemHtml += '<div class="actions">';
 
 			// launch app
-			if (item.appLaunchUrl) {
+			if (item.appLaunchUrl && item.enabled) {
 				itemHtml += '<div>';
 				itemHtml += '<a href="' + item.appLaunchUrl + '" class="btn btn-info app-launch">Launch <span class="glyphicon glyphicon-play-circle"></span></a>';
 				itemHtml += '</div>';
 			}
 
 			// enable
+
+			var enableDisabled = item.mayDisable ? '' : 'disabled';
+
 			itemHtml += '<div>';
-			itemHtml += '<label class="checkbox">';
+			itemHtml += '<label class="checkbox ' + enableDisabled + '">';
 			if (item.enabled) {
-				itemHtml += '<input class="action-enable" type="checkbox" checked> Enabled';
+				itemHtml += '<input class="action-enable" type="checkbox" checked ' + enableDisabled + '> Enabled';
 			}
 			else {
-				itemHtml += '<input class="action-enable" type="checkbox"> Enable';
+				itemHtml += '<input class="action-enable" type="checkbox" ' + enableDisabled + '> Enable';
 			}
 			itemHtml += '</label>';
 			itemHtml += '</div>';
 
 			// uninstall
-			itemHtml += '<div class="uninstall">';
+
+			var uninstallDisabled = item.mayDisable ? '' : 'disabled';
+
+			itemHtml += '<div class="uninstall ' + uninstallDisabled + '">';
 
 				itemHtml += '<div class="proceed">';
-				itemHtml += '<a href="#" class="btn btn-danger btn-sm action-uninstall"><span class="glyphicon glyphicon-trash"></span> Uninstall</a>';
+				itemHtml += '<a href="#" class="btn btn-danger btn-sm action-uninstall ' + uninstallDisabled + '"><span class="glyphicon glyphicon-trash"></span> Uninstall</a>';
 				itemHtml += '</div>';
 
 				itemHtml += '<div class="confirm hidden">';
