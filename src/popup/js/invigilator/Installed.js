@@ -162,7 +162,7 @@
 
 			// icon
 			itemHtml += '<div class="icon">';
-			itemHtml += '<img src="' + i.common.Extension.getIcon(item, 48, !item.enabled) + '">';
+			itemHtml += '<img src="' + i.common.Extension.getIcon(item.id, 48, !item.enabled) + '">';
 			itemHtml += '</div>';
 
 			// details
@@ -208,6 +208,8 @@
 				if (homepageUrl !== '') {
 					itemHtml += '<span><a href="' + homepageUrl + '">Visit Homepage</a></span>';
 				}
+
+				itemHtml += '<span><a href="chrome://extensions/?id=' + item.id + '">Open in Extensions Tab</a></span>';
 
 				// close additional details
 				itemHtml += '</div>';
@@ -271,7 +273,7 @@
 			// launch app
 			if (item.appLaunchUrl) {
 				itemHtml += '<div>';
-				itemHtml += '<a href="' + item.appLaunchUrl + '" class="btn btn-info">Launch <span class="glyphicon glyphicon-play-circle"></span></a>';
+				itemHtml += '<a href="' + item.appLaunchUrl + '" class="btn btn-info app-launch">Launch <span class="glyphicon glyphicon-play-circle"></span></a>';
 				itemHtml += '</div>';
 			}
 
@@ -295,7 +297,7 @@
 				itemHtml += '</div>';
 
 				itemHtml += '<div class="confirm hidden">';
-			itemHtml += '<a href="#" class="btn btn-warning btn-xs action-cancel-uninstall"><span class="glyphicon glyphicon-remove"></span> Cancel</a>';
+					itemHtml += '<a href="#" class="btn btn-warning btn-xs action-cancel-uninstall"><span class="glyphicon glyphicon-remove"></span> Cancel</a>';
 					itemHtml += '<a href="#" class="btn btn-danger btn-sm action-confirm-uninstall"><span class="glyphicon glyphicon-ok"></span> Confirm Uninstall</a>';
 				itemHtml += '</div>';
 
@@ -333,13 +335,29 @@
 
 			// enable/disable extension
 			$('body').on('change', '.action-enable', function(e) {
-				Invigilator.common.Extension.setEnabled(_this.getItemId(this), this.checked);
+				if (this.checked) {
+					// track event
+					i.common.Analytics.event('Extension', 'Enable');
+					i.common.Extension.enable(_this.getItemId(this));
+
+				}
+				else {
+					// track event
+					i.common.Analytics.event('Extension', 'Disable');
+					i.common.Extension.disable(_this.getItemId(this));
+				}
 			});
 
 			// reload developer extensions
 			$('body').on('click', '.action-reload', function(e) {
+
 				e.preventDefault();
+
+				// track event
+				i.common.Analytics.event('Extension', 'Reload');
+
 				Invigilator.common.Extension.reload(_this.getItemId(this));
+
 			});
 
 			/**
@@ -348,15 +366,25 @@
 
 			// show confirm
 			$('body').on('click', '.action-uninstall', function(e) {
+
 				e.preventDefault();
+
+				// track event
+				i.common.Analytics.event('Extension', 'Uninstall');
+
 				var ct = $(this).closest('.uninstall');
 				ct.find('.proceed').addClass('hidden');
 				ct.find('.confirm').removeClass('hidden');
+
 			});
 
 			// cancel uninstall
 			$('body').on('click', '.action-cancel-uninstall', function(e) {
 				e.preventDefault();
+
+				// track event
+				i.common.Analytics.event('Extension', 'Cancel Uninstall');
+
 				var ct = $(this).closest('.uninstall');
 				ct.find('.proceed').removeClass('hidden');
 				ct.find('.confirm').addClass('hidden');
@@ -365,7 +393,17 @@
 			// confirm uninstall
 			$('body').on('click', '.action-confirm-uninstall', function(e) {
 				e.preventDefault();
+
+				// track event
+				i.common.Analytics.event('Extension', 'Confirm Uninstall');
+
 				Invigilator.common.Extension.uninstall(_this.getItemId(this));
+			});
+
+			// app launch
+			$('body').on('click', '.app-launch', function() {
+				// track event
+				i.common.Analytics.event('Extension', 'App Launch');
 			});
 
 		}

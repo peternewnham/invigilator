@@ -1,5 +1,5 @@
 {
-  "name": "invigilator",
+  "name": "invigilator-server",
   "version": "1.0.0",
   "homepage": "http://www.blarg.co.uk/tools/invigilator",
   "bugs": "https://github.com/wrakky/invigilator/issues",
@@ -13,14 +13,16 @@
     "type": "git",
     "url": "https://github.com/wrakky/invigilator.git"
   },
+  "dependencies": {
+    "express": "~3.5.0",
+    "request": "~2.34.0",
+    "cheerio": "~0.13.1",
+    "jsdom": "~0.10.3",
+    "es6-promise": "~0.1.1",
+    "memcached": "~0.2.8",
+    "zombie": "~2.0.0-alpha31"
+  },
   "devDependencies": {
-    "grunt": "~0.4.2",
-    "load-grunt-tasks": "~0.3.0",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-copy": "~0.5.0",
-    "grunt-contrib-less": "~0.9.0",
-    "grunt-contrib-uglify": "~0.3.2",
-    "grunt-zip": "~0.12.0"
+    "nodemon": "~1.0.17"
   }
 }

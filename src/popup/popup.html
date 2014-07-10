@@ -1,3 +1,9 @@
+<!--
+Hello and thanks for looking at my code!
+Want to contribute? Sure! https://github.com/wrakky/invigilator
+Want to tell me how rubbish/stupid/pointless/broken it is but can't be bothered to do anything about it yourself? I feel your pain! twitter.com/wrakky
+-->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,42 +12,117 @@
 </head>
 <body>
 
-<header>
-	<div id="shortcuts" class="pull-right">
-		<p>
-			<a href="https://chrome.google.com/webstore/category/extensions" class="btn btn-primary btn-xs">
-				Open Chrome Webstore
-				<span class="glyphicon glyphicon-new-window"></span>
-			</a>
-		</p>
-		<p>
-			<a href="chrome://extensions/" class="btn btn-info btn-xs">Extensions Tab</a>
-			<a href="chrome://apps/" class="btn btn-info btn-xs">Apps Tab</a>
-		</p>
+<nav class="clearfix">
+	<div class="pull-left">
+		<a href="https://chrome.google.com/webstore/category/extensions" class="btn btn-primary btn-xs" style="margin-right:20px;">
+			Get More Extensions
+			<span class="glyphicon glyphicon-new-window"></span>
+		</a>
+		<a href="chrome://extensions/" class="btn btn-info btn-xs">Extensions Tab</a>
+		<a href="chrome://apps/" class="btn btn-info btn-xs">Apps Tab</a>
 	</div>
-	<h1>
-		<img src="icons/icon48.png">
-		Invigilator
-	</h1>
-</header>
+	<div class="pull-right">
+		<a href="#" class="btn btn-success btn-xs">
+			<span class="glyphicon glyphicon-exclamation-sign"></span>
+			Report Problem or Suggestion
+		</a>
+		<a href="#" class="btn btn-warning btn-xs">
+			Leave a Review &nbsp;
+			<span class="glyphicon glyphicon-star"></span>
+			<span class="glyphicon glyphicon-star"></span>
+			<span class="glyphicon glyphicon-star"></span>
+			<span class="glyphicon glyphicon-star"></span>
+			<span class="glyphicon glyphicon-star"></span>
+		</a>
+	</div>
+</nav>
+
+<h1>
+	<img src="icons/icon48.png">
+	Invigilator
+</h1>
 
 <ul class="nav nav-tabs">
-	<li class="active"><a href="#installed" data-toggle="tab">Installed Extensions</a></li>
-	<li><a href="#uninstalled" data-toggle="tab">Uninstalled Extensions</a></li>
-	<li><a href="#history" data-toggle="tab">History</a></li>
-	<li><a href="#about" data-toggle="tab">About</a></li>
+	<li><a href="#installed" data-toggle="tab" data-title="Installed">Installed Extensions</a></li>
+	<li><a href="#uninstalled" data-toggle="tab" data-title="Uninstalled">Uninstalled Extensions</a></li>
+	<li><a href="#history" data-toggle="tab" data-title="History">History</a></li>
+	<li class="active"><a href="#about" data-toggle="tab" data-title="About">About</a></li>
 </ul>
 
 <div class="tab-content">
-	<div class="tab-pane active" id="installed"></div>
+
+	<!-- Installed Extensions Content -->
+	<div class="tab-pane" id="installed"></div>
+
+	<!-- Uninstalled Extensions Content -->
 	<div class="tab-pane" id="uninstalled"></div>
+
+	<!-- Extension History Content -->
 	<div class="tab-pane" id="history"></div>
-	<div class="tab-pane" id="about">
-		<h2>About Invigilator</h2>
-		<p>Invigilator is an extension management and notficiation system.</p>
+
+	<!-- About Invigilator Content -->
+	<div class="tab-pane container active" id="about">
+		<div class="row">
+
+			<div class="col-xs-7 left">
+
+				<h3>Release History</h3>
+				<h4>v1.0.0</h4>
+				<ul>
+					<li>
+						Initial release. What could possibly go wrong?
+						<ul>
+							<li>Manage your extensions and apps</li>
+							<li>View previously uninstalled extensions</li>
+							<li>View extension history</li>
+							<li>Alerts when extensions are updated</li>
+							<li>Alerts when extensions change ownership</li>
+							<li>Alerts when reviews with spam/spyware/adware keywords are made</li>
+						</ul>
+					</li>
+				</ul>
+
+			</div>
+
+			<div class="col-xs-5 right">
+
+				<div>
+					<h3>Contribute</h3>
+					<p>
+						Invigilator was created by <a href="http://twitter.com/wrakky">Pete Newnham</a>. If you would like to contribute to the code or a translation, the source is
+						freely available on github.
+					</p>
+					<a href="https://github.com/wrakky/invigilator" class="btn btn-primary btn-xs btn-block">Visit Github Project Page</a>
+				</div>
+
+				<div>
+					<h3>Shameless Plugs</h3>
+					<p>Like Invigilator? Why not try my other extensions!</p>
+					<dl>
+						<dt><a href="https://chrome.google.com/webstore/detail/page-ruler/jlpkojjdgbllmedoapgfodplfhcbnbpn">Page Ruler</a> - over 135,000 users!</dt>
+						<dd>Draw a ruler to get pixel dimensions and positioning, and measure elements on any web page.</dd>
+					</dl>
+					<dl>
+						<dt><a href="https://chrome.google.com/webstore/detail/robots-vs-humans/fjnhgpnnokcbcfbopenblmpncpaljfbk">Robots vs Humans</a></dt>
+						<dd>Displays the robots.txt and humans.txt for any website. Optional battle to the death.</dd>
+					</dl>
+				</div>
+
+				<div>
+					<h3>Credits</h3>
+					<ul>
+						<li>UI created with <a href="http://getbootstrap.com">Bootstrap</a>, <a href="http://jquery.com">jQuery</a> and <a href="http://momentjs.com">Moment.js</a></li>
+						<li>Invigilator Icon by <a href="http://www.elegantthemes.com/blog/freebie-of-the-week/beautiful-flat-icons-for-free">Elegant Themes</a></li>
+					</ul>
+				</div>
+
+			</div>
+		</div>
 	</div>
+
 </div>
 
+<!-- Javascripts -->
 <script type="text/javascript" src="vendor/jquery.js"></script>
 <script type="text/javascript" src="vendor/bootstrap.js"></script>
 <script type="text/javascript" src="vendor/moment.js"></script>

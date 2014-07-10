@@ -14,8 +14,22 @@
 			 * Create filter
 			 */
 
-			var filterHtml = '<select id="history-filter" class="form-control"><option value="">Show All Extensions</option></select>';
+			var filterHtml = '<select id="history-filter" class="form-control"><option value="">Show All</option></select>';
 			$('#history').append(filterHtml);
+
+			var optGroups = {};
+
+			var addOption = function(title, extension) {
+
+				if (!optGroups[title]) {
+					optGroups[title] = $(document.createElement('optgroup'));
+					optGroups[title].attr('label', title);
+					$('#history-filter').append(optGroups[title]);
+				}
+
+				optGroups[title].append('<option value="' + extension.id + '">' + extension.name + '</option>');
+
+			};
 
 			var options = {
 				direction: 'next',
@@ -23,8 +37,19 @@
 			};
 
 			i.common.IndexedDB.eachFromStore('extensions', options, function(extension) {
-				$('#history-filter').append('<option value="' + extension.id + '">' + extension.name + '</option>');
-
+				switch (extension.type) {
+					case 'extension':
+						addOption('Extensions', extension);
+					break;
+					case 'hosted_app':
+					case 'packaged_app':
+					case 'legacy_packaged_app':
+						addOption('Apps', extension);
+					break;
+					case 'theme':
+						addOption('Themes', extension);
+					break;
+				}
 			});
 
 			$('#history-filter').on('change', function() {

@@ -52,9 +52,10 @@
 			for (var field in extension) {
 
 				if (/^Date\|/.test(extension[field])) {
-					console.log(field, extension[field]);
+
 					var time = parseInt(extension[field].replace(/^Date|/, ''), 10);
 					extension[field] = new Date(time);
+
 				}
 
 			}
@@ -137,6 +138,8 @@
 
 		reload: function(id, callback) {
 
+			console.log('Extension.reload Request:', id);
+
 			var _this = this;
 
 			this.disable(id, function() {
@@ -158,7 +161,15 @@
 
 		},
 
-		getIcon: function(extension, size, gray) {
+		getIcon: function(extensionId, size, gray) {
+
+			var iconUrl = 'chrome://extension-icon/' + extensionId + '/' + size + '/1';
+
+			if (gray) {
+				iconUrl += '?grayscale=true';
+			}
+
+			return iconUrl;
 
 			// no icon so show default
 			if (!extension.icons) {
@@ -189,11 +200,53 @@
 					bestUrl += '?grayscale=true';
 				}
 
-
-
 				return bestUrl;
 
 			}
+
+		},
+
+		addExclusion: function(type, extension, forever, callback) {
+
+			i.common.Settings.getSync(type, function(exclusions) {
+
+				if (!exclusions.hasOwnProperty(extension.id)) {
+
+					var date = false;
+
+					if (!forever) {
+						date = new Date();
+						date.setMonth(date.getMonth()+1);
+						date.setHours(0, 0, 0, 0);
+						date = date.getTime();
+					}
+
+					exclusions[extension.id] = {
+						name: extension.name,
+						date: date
+					};
+
+					i.common.Settings.setSync(type, exclusions, callback);
+
+				}
+
+			});
+
+		},
+
+		removeExclusion: function(type, extensionId, callback) {
+
+			i.common.Settings.getSync(type, function(exclusions) {
+
+				if (exclusions.hasOwnProperty(extensionId)) {
+
+					delete exclusions[extensionId];
+
+					i.common.Settings.setSync(type, exclusions, callback);
+
+				}
+
+			});
 
 		}
 

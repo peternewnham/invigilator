@@ -49,6 +49,13 @@ module.exports = function (grunt) {
 				dest: 'build/'
 			},
 
+			option: {
+				expand: true,
+				cwd: 'src/options/',
+				src: 'options.html',
+				dest: 'build/'
+			},
+
 			vendor_js: {
 				files: {
 					'build/vendor/jquery.js': 'bower_components/jquery/dist/jquery.min.js',
@@ -73,6 +80,11 @@ module.exports = function (grunt) {
 			popup: {
 				files: {
 					'build/popup.css': 'src/popup/less/popup.less'
+				}
+			},
+			option: {
+				files: {
+					'build/options.css': 'src/options/less/options.less'
 				}
 			}
 		},
@@ -99,7 +111,20 @@ module.exports = function (grunt) {
 				},
 				files: {
 					'build/popup.js': [
-						'src/popup/**/*.js',
+						'src/popup/js/**/*.js',
+						'src/common/**/*.js'
+					]
+				}
+			},
+			options_dev: {
+				options: {
+					mangle: false,
+					compress: false,
+					beautify: true
+				},
+				files: {
+					'build/options.js': [
+						'src/options/js/**/*.js',
 						'src/common/**/*.js'
 					]
 				}
@@ -162,6 +187,24 @@ module.exports = function (grunt) {
 			popup_less: {
 				files: 'src/popup/less/**/*.less',
 				tasks: ['less:popup']
+			},
+
+			options_js: {
+				files: [
+					'src/options/js/**/*.js',
+					'src/common/**/*.js'
+				],
+				tasks: ['uglify:options_dev']
+			},
+
+			options_html: {
+				files: 'src/options/options.html',
+				tasks: ['copy:option']
+			},
+
+			options_less: {
+				files: 'src/options/less/**/*.less',
+				tasks: ['less:option']
 			}
 
 		},
@@ -183,7 +226,8 @@ module.exports = function (grunt) {
 	// build pretty js
 	grunt.registerTask('js_dev', [
 		'uglify:background_dev',
-		'uglify:popup_dev'
+		'uglify:popup_dev',
+		'uglify:options_dev'
 	]);
 
 	// build ugly js

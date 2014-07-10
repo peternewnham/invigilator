@@ -1,0 +1,8 @@
+nodejs
+open port 3000
+
+es6-promise - https://github.com/jakearchibald/es6-promise
+request - https://github.com/mikeal/request
+memcached - https://github.com/3rd-Eden/node-memcached
+
+forever - https://github.com/nodejitsu/forever

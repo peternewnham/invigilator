@@ -11,15 +11,22 @@
 	"permissions":	[
 		"management",
 		"notifications",
-		"https://chrome.google.com/webstore/*"
+		"storage",
+		"alarms",
+		"http://invigilator.blarg.co.uk:3000/*",
+		"https://chrome.google.com/webstore/detail/*",
+		"https://chrome.google.com/reviews/components"
 	],
 
 	"background": {
 		"scripts": [
-			"background.js"
+			"background.js",
+			"vendor/moment.js"
 		],
 		"persistent": false
 	},
+
+	"options_page": "options.html",
 
 	"browser_action": {
 		"default_icon": {
@@ -34,6 +41,8 @@
 		"16": "icons/icon16.png",
 		"48": "icons/icon48.png",
 		"128": "icons/icon128.png"
-	}
+	},
+
+	"content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'"
 
 }

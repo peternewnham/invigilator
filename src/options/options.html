@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title data-message="optionsPageTitle">Invigilator Options</title>
+	<link rel="stylesheet" type="text/css" href="options.css" />
+	<meta charset="UTF-8">
+</head>
+
+<body>
+
+<h1>
+	Invigilator Options
+	<span class="label label-info">
+		<span class="glyphicon glyphicon-info-sign"></span>
+		Settings are saved automatically
+	</span>
+</h1>
+
+<form class="form-horizontal" role="form">
+
+	<h3>Notifications</h3>
+
+	<!-- Notification Icon -->
+	<div class="form-group clearfix">
+		<label class="col-sm-3 control-label" for="notificationIcon">Update Notification Icon:</label>
+		<div class="col-sm-9 row">
+			<div class="col-sm-4">
+				<select class="form-control" id="notificationIcon">
+					<option value="self">Show Invigilator Icon</option>
+					<option value="extension">Show Extension Icon</option>
+				</select>
+			</div>
+			<div class="col-sm-12 help-block">
+				Show the Invigilator icon next to update notifications, or use the icon from the extension the notification is for
+			</div>
+		</div>
+	</div>
+
+	<!-- Update Notifications -->
+	<div class="form-group clearfix">
+		<label class="col-sm-3 control-label" for="showUpdateNotifications">Show Update Notifications:</label>
+		<div class="col-sm-9 row">
+			<div class="col-sm-4">
+				<select class="form-control" id="showUpdateNotifications">
+					<option value="0">No</option>
+					<option value="1" selected>Yes</option>
+				</select>
+			</div>
+			<div class="col-sm-12 help-block">
+				Show notifications whenever an extension is updated
+			</div>
+		</div>
+
+		<!-- Exclusions -->
+		<div id="updateNotificationExclusions" class="col-sm-9 col-sm-offset-3">
+			<label class="control-label">Exclusions:</label>
+			<div class="help-block"></div>
+			<table class="table table-striped"></table>
+		</div>
+	</div>
+
+	<!-- Review Warning Notifications -->
+	<div class="form-group clearfix">
+		<label class="col-sm-3 control-label" for="showReviewWarningNotifications">Show Review Warning Notifications:</label>
+		<div class="col-sm-9 row">
+			<div class="col-sm-4">
+				<select class="form-control" id="showReviewWarningNotifications">
+					<option value="0">No</option>
+					<option value="1" selected>Yes</option>
+				</select>
+			</div>
+			<div class="col-sm-12 help-block">
+				Show notifications whenever a review warning is detected
+			</div>
+		</div>
+
+		<!-- Exclusions -->
+		<div id="reviewWarningNotificationExclusions" class="col-sm-9 col-sm-offset-3">
+			<label class="control-label">Exclusions:</label>
+			<div class="help-block"></div>
+			<table class="table table-striped"></table>
+		</div>
+	</div>
+
+	<!-- Owner Change Notifications -->
+	<div class="form-group clearfix">
+		<label class="col-sm-3 control-label" for="showOwnerChangeNotifications">Show Owner Change Notifications:</label>
+		<div class="col-sm-9 row">
+			<div class="col-sm-4">
+				<select class="form-control" id="showOwnerChangeNotifications">
+					<option value="0">No</option>
+					<option value="1" selected>Yes</option>
+				</select>
+			</div>
+			<div class="col-sm-12 help-block">
+				Show notifications whenever an extension owner name changes
+			</div>
+		</div>
+
+		<!-- Exclusions -->
+		<div id="ownerChangeNotificationExclusions" class="col-sm-9 col-sm-offset-3">
+			<label class="control-label">Exclusions:</label>
+			<div class="help-block"></div>
+			<table class="table table-striped"></table>
+		</div>
+
+	</div>
+
+</form>
+
+<script type="text/javascript" src="vendor/jquery.js"></script>
+<script type="text/javascript" src="vendor/bootstrap.js"></script>
+<script type="text/javascript" src="vendor/moment.js"></script>
+<script type="text/javascript" src="options.js"></script>
+
+</body>
+
+</html>

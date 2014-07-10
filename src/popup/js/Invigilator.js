@@ -3,19 +3,7 @@
 
 var Invigilator = {
 
-	openExternalLink: function(url) {
-
-		console.log('Opening External Link:', url);
-
-		chrome.tabs.create({
-			url: url
-		});
-
-	},
-
 	initEvents: function() {
-
-		var _this = this;
 
 		/**
 		 * Open external links in a new tab
@@ -29,19 +17,26 @@ var Invigilator = {
 
 				e.preventDefault();
 
-				_this.openExternalLink(href);
+				Invigilator.common.Util.openLink(href);
 
 			}
 
 		});
 
+		// sometimes scrollbar does not show
+		// this tries to force it to do so
 		$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+
 			var d = document.createElement('div');
 			d.style.setProperty('height', '5px');
 			document.body.appendChild(d);
 			setTimeout(function() {
 				document.body.removeChild(d)
 			}, 10);
+
+			// also track tab view
+			Invigilator.common.Analytics.pageview('popup.html' + $(e.target).attr('href'), 'Popup ' + $(e.target).data('title'));
+
 		});
 
 	}
@@ -49,6 +44,9 @@ var Invigilator = {
 };
 
 $(function() {
+
+	// track page view
+	Invigilator.common.Analytics.pageview('popup.html#installed', 'Popup Installed');
 
 	Invigilator.initEvents();
 
