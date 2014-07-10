@@ -214,7 +214,7 @@
 
 			// launch app
 			itemHtml += '<div>';
-			itemHtml += '<a href="' + item.appLaunchUrl + '" class="btn btn-info">Reinstall <span class="glyphicon glyphicon-play-circle"></span></a>';
+			itemHtml += '<a href="https://chrome.google.com/webstore/detail/' + item.id + '" class="btn btn-info">Reinstall <span class="glyphicon glyphicon-play-circle"></span></a>';
 			itemHtml += '</div>';
 
 			// close actions
