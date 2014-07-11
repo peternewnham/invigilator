@@ -26,6 +26,8 @@
 
 				i.form.UpdateNotificationExclusions.toggle(value);
 
+				i.common.Analytics.event('Settings', 'Show Update Notifications', value && 'Yes' || 'No');
+
 			});
 
 		}

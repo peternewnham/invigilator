@@ -16,7 +16,13 @@
 
 		saveValue: function() {
 
-			i.common.Settings.setSync('notificationIcon', $('#notificationIcon').val());
+			var val = $('#notificationIcon').val();
+
+			i.common.Settings.setSync('notificationIcon', val, function() {
+
+				i.common.Analytics.event('Settings', 'Notification Icon', val);
+
+			});
 
 		}
 

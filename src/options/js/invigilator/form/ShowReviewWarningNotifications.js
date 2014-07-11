@@ -26,6 +26,8 @@
 
 				i.form.ReviewWarningNotificationExclusions.toggle(value);
 
+				i.common.Analytics.event('Settings', 'Show Review Warning Notifications', value && 'Yes' || 'No');
+
 			});
 
 		}

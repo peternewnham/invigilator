@@ -26,6 +26,8 @@
 
 				i.form.OwnerChangeNotificationExclusions.toggle(value);
 
+				i.common.Analytics.event('Settings', 'Show Owner Change Notifications', value && 'Yes' || 'No');
+
 			});
 
 		}

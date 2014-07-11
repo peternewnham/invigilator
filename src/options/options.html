@@ -25,7 +25,7 @@
 	<div class="form-group clearfix">
 		<label class="col-sm-3 control-label" for="notificationIcon">Update Notification Icon:</label>
 		<div class="col-sm-9 row">
-			<div class="col-sm-4">
+			<div class="col-sm-3">
 				<select class="form-control" id="notificationIcon">
 					<option value="self">Show Invigilator Icon</option>
 					<option value="extension">Show Extension Icon</option>
@@ -41,7 +41,7 @@
 	<div class="form-group clearfix">
 		<label class="col-sm-3 control-label" for="showUpdateNotifications">Show Update Notifications:</label>
 		<div class="col-sm-9 row">
-			<div class="col-sm-4">
+			<div class="col-sm-2">
 				<select class="form-control" id="showUpdateNotifications">
 					<option value="0">No</option>
 					<option value="1" selected>Yes</option>
@@ -64,7 +64,7 @@
 	<div class="form-group clearfix">
 		<label class="col-sm-3 control-label" for="showReviewWarningNotifications">Show Review Warning Notifications:</label>
 		<div class="col-sm-9 row">
-			<div class="col-sm-4">
+			<div class="col-sm-2">
 				<select class="form-control" id="showReviewWarningNotifications">
 					<option value="0">No</option>
 					<option value="1" selected>Yes</option>
@@ -87,7 +87,7 @@
 	<div class="form-group clearfix">
 		<label class="col-sm-3 control-label" for="showOwnerChangeNotifications">Show Owner Change Notifications:</label>
 		<div class="col-sm-9 row">
-			<div class="col-sm-4">
+			<div class="col-sm-2">
 				<select class="form-control" id="showOwnerChangeNotifications">
 					<option value="0">No</option>
 					<option value="1" selected>Yes</option>
@@ -105,6 +105,20 @@
 			<table class="table table-striped"></table>
 		</div>
 
+	</div>
+
+	<h3>Extension Settings</h3>
+
+	<div class="form-group clearfix">
+		<label class="col-sm-3 control-label" for="statistics">Send Anonymous Usage Statistics:</label>
+		<div class="col-sm-9 row">
+			<div class="col-sm-4 checkbox-row">
+				<input type="checkbox" id="statistics">
+			</div>
+			<div class="col-sm-12 help-block">
+				Information collected contains no personal information and is used solely for the purpose of improving this extension by seeing which sections and features are used
+			</div>
+		</div>
 	</div>
 
 </form>
