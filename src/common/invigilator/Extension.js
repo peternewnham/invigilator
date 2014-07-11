@@ -206,11 +206,11 @@
 
 		},
 
-		addExclusion: function(type, extension, forever, callback) {
+		addExclusion: function(key, extensionId, extensionName, forever, callback) {
 
-			i.common.Settings.getSync(type, function(exclusions) {
+			i.common.Settings.getSync(key, function(exclusions) {
 
-				if (!exclusions.hasOwnProperty(extension.id)) {
+				if (!exclusions.hasOwnProperty(extensionId)) {
 
 					var date = false;
 
@@ -221,12 +221,12 @@
 						date = date.getTime();
 					}
 
-					exclusions[extension.id] = {
-						name: extension.name,
+					exclusions[extensionId] = {
+						name: extensionName,
 						date: date
 					};
 
-					i.common.Settings.setSync(type, exclusions, callback);
+					i.common.Settings.setSync(key, exclusions, callback);
 
 				}
 

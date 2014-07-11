@@ -71,6 +71,7 @@ chrome.runtime.onStartup.addListener(function() {
  */
 chrome.management.onInstalled.addListener(function(extensionInfo) {
 
+	// ignore dev extensions
 	if (!Invigilator.common.Extension.isDev(extensionInfo)) {
 
 		Invigilator.Extension.getFromStore(extensionInfo.id, function(extension) {
