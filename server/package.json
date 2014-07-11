@@ -15,12 +15,7 @@
   },
   "dependencies": {
     "express": "~3.5.0",
-    "request": "~2.34.0",
-    "cheerio": "~0.13.1",
-    "jsdom": "~0.10.3",
-    "es6-promise": "~0.1.1",
-    "memcached": "~0.2.8",
-    "zombie": "~2.0.0-alpha31"
+    "memcached": "~0.2.8"
   },
   "devDependencies": {
     "nodemon": "~1.0.17"

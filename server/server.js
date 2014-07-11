@@ -23,7 +23,6 @@ else {
 //==============
 
 var express = require('express');
-var request = require('request');
 var Memcached = require('memcached');
 
 var app = express();
@@ -108,7 +107,7 @@ app.get(/^\/([a-z]{32})$/, function(req, res) {
 
 });
 
-/**
+/*
  * Save cache data
  * /cache/[extensionId]
  */
@@ -180,6 +179,14 @@ app.post(/^\/([a-z]{32})$/, function(req, res) {
 
 	});
 
+});
+
+/*
+ * Check server is up
+ */
+app.get('/test', function(req, res) {
+	res.send('OK');
+	res.end();
 });
 
 /*
