@@ -7,8 +7,7 @@
 			/**
 			 * Interval in seconds to check for owner/spam
 			 */
-			//dataCheckInterval: 60 * 60 * 24 * 1000
-			dataCheckInterval: 60 * 1000,
+			dataCheckInterval: 60 * 60 * 24 * 1000, // 1 day
 
 			notificationIcon: 'self',
 

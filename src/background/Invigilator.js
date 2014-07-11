@@ -43,9 +43,9 @@ chrome.runtime.onInstalled.addListener(function(details) {
 	Invigilator.allowEnabledDisabledEvents = true;
 
 	// track page view
-	Invigilator.common.Analytics.pageview('background.html');
+	Invigilator.common.Analytics.pageview('background.html', 'Background');
 
-	//Invigilator.Alarms.setAlarms();
+	Invigilator.Alarms.setAlarms();
 
 });
 
@@ -62,7 +62,7 @@ chrome.runtime.onStartup.addListener(function() {
 	// track page view
 	Invigilator.common.Analytics.pageview('background.html', 'Background');
 
-	//Invigilator.Alarms.setAlarms();
+	Invigilator.Alarms.setAlarms();
 
 });
 
