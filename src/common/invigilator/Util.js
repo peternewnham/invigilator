@@ -2,12 +2,14 @@
 
 	i.common.Util = {
 
-		openLink: function(url) {
+		openLink: function(url, noTrack) {
 
 			console.info('Opening link: ', url);
 
 			// track event
-			i.common.Analytics.event('Link', 'click', url);
+			if (!noTrack) {
+				i.common.Analytics.event('Link', 'click', url);
+			}
 
 			chrome.tabs.create({
 				url: url

@@ -118,6 +118,22 @@
 				chrome.storage.local.set(_this.defaultLocalSettings);
 			});
 
+		},
+
+		removeExclusion: function(key, id) {
+
+			this.getSync(key, function(exclusions) {
+
+				if (exclusions.hasOwnProperty(id)) {
+
+					delete exclusions[id];
+
+					this.setSync(key, exclusions);
+
+				}
+
+			});
+
 		}
 
 	};

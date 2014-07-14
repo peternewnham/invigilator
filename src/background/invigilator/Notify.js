@@ -1,7 +1,13 @@
+/**
+ * Notification management
+ */
 (function(i) {
 
 	i.Notify = {
 
+		/**
+		 * Buttons to add to the notifications
+		 */
 		buttons: {
 			IGNORE_ONE_MONTH: {
 				title:	'Ignore for this extension for 1 month',
@@ -13,15 +19,35 @@
 			}
 		},
 
+		/**
+		 * Notification callback store
+		 * Each notification will have callbacks associated with it which will be stored here with the notification id as the key
+		 */
 		notifications: {},
 
+		/**
+		 * Returns the Date in international format
+		 * @returns {String}
+		 */
 		getDate: function() {
 
 			return moment(new Date).format('LLLL');
 
 		},
 
-		showNotification: function(options, callback) {
+		/**
+		 * Creates a notification
+		 * @param {Object} options
+		 * 		name				- {String}	- name of the notification type (used for logging)
+		 * 		extensionId 		- {String}	- extension id notification is for
+		 * 		extensionName		- {String}	- name of the extension the notification is for
+		 * 		showKey				- {String}	- name of the key used to get whether the notification should be shown
+		 * 		exclusionKey		- {String}	- name of the key used to get whether the extension is excluded from notifications
+		 * 		clickType			- {String}	- The action to perform when the notification is clicked (it's onClicked event)
+		 * 		notificationId		- {String}	- The ID of the notication
+		 * 		notificationOptions	- {Object}	- Notification options as defined by the extension api
+		 */
+		showNotification: function(options) {
 
 			var _this = this;
 
@@ -77,7 +103,7 @@
 										// exclusion in past so remove it
 										else {
 
-											// TODO: remove exclusion
+											i.common.Settings.removeExclusion(options.exclusionKey, options.extensionId);
 
 										}
 
@@ -110,24 +136,31 @@
 
 											chrome.notifications.create(options.notificationId, notificationOptions, function(notificationId) {
 
+												// when user clicks the notification body
+												// open extension store page
 												var readCallback = function() {
 													i.common.Analytics.event('Notification', 'Click');
 													// open webstore reviews link
-													i.common.Util.openLink('https://chrome.google.com/webstore/detail/' + options.extensionId + '/' + options.clickType);
+													i.common.Util.openLink('https://chrome.google.com/webstore/detail/' + options.extensionId + '/' + options.clickType, true);
 												};
 
+												// when user clicks first button
+												// ignore notifications for 1 month
 												var ignoreCallbackMonth = function(notificationId) {
 													i.common.Analytics.event('Notification', 'Exclude 1 Month');
 													i.common.Extension.addExclusion(options.exclusionKey, options.extensionId, options.extensionName, false);
 													chrome.notifications.clear(notificationId, function(){})
 												};
 
+												// when user clicks second button
+												// ignore notifications forever
 												var ignoreCallbackForever = function(notificationId) {
 													i.common.Analytics.event('Notification', 'Exclude Forever');
 													i.common.Extension.addExclusion(options.exclusionKey, options.extensionId, options.extensionName, true);
 													chrome.notifications.clear(notificationId, function(){})
 												};
 
+												// save notification callbacks
 												_this.notifications[notificationId] = {
 													click: readCallback,
 													button: [
@@ -166,6 +199,11 @@
 
 		},
 
+		/**
+		 * Clears a notification
+		 * @param {String} notificationId	Notification ID
+		 * @param {Function} callback		Callback after notification is cleared
+		 */
 		clearNotification: function(notificationId, callback) {
 
 			chrome.notifications.clear(notificationId, function() {
@@ -178,17 +216,26 @@
 
 		},
 
+		/**
+		 * Returns the icon url for the notification
+		 * @param {String} extensionId	The extension id
+		 * @param {String} defaultIcon	Default icon to show if the extension does not have one
+		 * @param {Function} callback	Callback after icon is fetched
+		 */
 		getIcon: function(extensionId, defaultIcon, callback) {
 
+			// get notification icon setting
 			i.common.Settings.getSync('notificationIcon', function(icon) {
 
 				console.log('getIcon:', icon);
 
+				// show extension icon
 				if (icon === 'extension') {
 
 					callback(i.common.Extension.getIcon(extensionId, 128));
 
 				}
+				// show invigilator icons
 				else {
 
 					callback(defaultIcon);
@@ -199,10 +246,16 @@
 
 		},
 
+		/**
+		 * Create an "Update" notification
+		 * @param {Object} extension	Extension details
+		 */
 		update: function(extension) {
 
+			// generate notification id
 			var notificationId = 'invigilator-update-' + extension.id + '-' + extension.version;
 
+			// create and show the notification
 			this.showNotification({
 				name:			'Update',
 				extensionId:	extension.id,
@@ -220,13 +273,20 @@
 
 		},
 
+		/**
+		 * Create an "Owner Change" notification
+		 * @param {Object} extension	Extension details
+		 */
 		owner: function(extension) {
 
+			// generate notification id
 			var notificationId = 'invigiator-owner-' + extension.id;
 
+			// generate notification message
 			var message = 'The owner name for "' + extension.name + '" has changed.';
 			message += ' This may be legitimate and harmless, but a new owner could mean changes to the extension without your knowledge.';
 
+			// create and show the notification
 			this.showNotification({
 				name:			'Owner Change',
 				extensionId:	extension.id,
@@ -244,17 +304,22 @@
 
 		},
 
+		/**
+		 * Create a "Bad Reviews" notification
+		 * @param {Object} extension	Extension details
+		 * @param {Number} count		Number of bad reviews
+		 */
 		reviews: function(extension, count) {
 
-			var _this = this;
-
+			// generate notification id
 			var notificationId = 'invigilator-reviews-' + extension.id;
 
+			// generate message
 			var reviewPlural = count > 1 ? 'reviews' : 'review';
 			var havePlural = count > 1 ? 'have' : 'has';
-
 			var message = count + ' recent ' + reviewPlural + ' for "' + extension.name + '" ' + havePlural + ' been detected as potentially referring to adverts and/or spyware.';
 
+			// create and show the notification
 			this.showNotification({
 				name:			'reviews',
 				extensionId:	extension.id,
@@ -275,12 +340,18 @@
 
 	};
 
+	/**
+	 * Notification click event handler
+	 */
 	chrome.notifications.onClicked.addListener(function(notificationId) {
 
+		// check notification events exist
 		if (i.Notify.notifications.hasOwnProperty(notificationId)) {
 
+			// get click callback
 			var clickCallback = i.Notify.notifications[notificationId].click;
 
+			// if it exists call it
 			if (typeof clickCallback === 'function') {
 
 				clickCallback(notificationId);
@@ -291,14 +362,19 @@
 
 	});
 
+	/**
+	 * Notification button click event handler
+	 */
 	chrome.notifications.onButtonClicked.addListener(function(notificationId, buttonIndex) {
 
+		// check notification events exist
 		if (i.Notify.notifications.hasOwnProperty(notificationId)) {
 
+			// get button callback
 			var notification = i.Notify.notifications[notificationId].button;
-
 			var buttonCallback = notification[buttonIndex];
 
+			// if it exists call it
 			if (typeof buttonCallback === 'function') {
 
 				buttonCallback(notificationId, buttonIndex);
@@ -309,12 +385,16 @@
 
 	});
 
+	/**
+	 * Notification closed event handler
+	 */
 	chrome.notifications.onClosed.addListener(function(notificationId, byUser) {
 
 		// clean up notification callback
 		var notifications = i.Notify.notifications;
 		delete notifications[notificationId];
 
+		// log event if the user manually closed the notification
 		if (byUser) {
 			i.common.Analytics.event('Notification', 'Closed');
 		}

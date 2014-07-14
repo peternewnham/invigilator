@@ -18,7 +18,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
 
 	console.info('onInstalled event detected:', details.reason);
 
-	/**
+	/*
 	 * First install
 	 */
 	if (details.reason === 'install') {
@@ -29,13 +29,27 @@ chrome.runtime.onInstalled.addListener(function(details) {
 		// store each extension
 		Invigilator.common.Extension.each(function(extension) {
 
+			// ignore dev extensions
 			if (!Invigilator.common.Extension.isDev(extension)) {
 
+				// add it to the store
 				Invigilator.Extension.storeAdd(extension, Invigilator.Actions.ALREADY_INSTALLED);
 
 			}
 
 		});
+
+		// track install event
+		Invigilator.common.Analytics.event('Run', 'Install');
+
+	}
+	/*
+	 * Update
+	 */
+	else {
+
+		// track update event
+		Invigilator.common.Analytics.event('Run', 'Update');
 
 	}
 
@@ -45,6 +59,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
 	// track page view
 	Invigilator.common.Analytics.pageview('background.html', 'Background');
 
+	// set alarms
 	Invigilator.Alarms.setAlarms();
 
 });
@@ -62,6 +77,10 @@ chrome.runtime.onStartup.addListener(function() {
 	// track page view
 	Invigilator.common.Analytics.pageview('background.html', 'Background');
 
+	// track run event
+	Invigilator.common.Analytics.event('Run', 'Open');
+
+	// set alarms
 	Invigilator.Alarms.setAlarms();
 
 });
@@ -74,9 +93,10 @@ chrome.management.onInstalled.addListener(function(extensionInfo) {
 	// ignore dev extensions
 	if (!Invigilator.common.Extension.isDev(extensionInfo)) {
 
+		// get the extension from the store
 		Invigilator.Extension.getFromStore(extensionInfo.id, function(extension) {
 
-			// already exists
+			// already exists - update or reinstall
 			if (!!extension) {
 
 				var data = {};
@@ -107,14 +127,16 @@ chrome.management.onInstalled.addListener(function(extensionInfo) {
 
 				}
 
+				// update store from live extension data
 				Invigilator.Extension.storeUpdateRefresh(extension.id, data, action)
 
 			}
-			// does not exist
+			// does not exist - first time install
 			else {
 
 				console.info('Extension Installed', extensionInfo.name, extensionInfo);
 
+				// add to store
 				Invigilator.Extension.storeAdd(extensionInfo, Invigilator.Actions.INSTALLED);
 
 			}
@@ -125,10 +147,17 @@ chrome.management.onInstalled.addListener(function(extensionInfo) {
 
 });
 
+/**
+ * Whenever an extension is uninstalled
+ */
 chrome.management.onUninstalled.addListener(function(extensionId) {
 
 	console.info('Extension Uninstalled:', extensionId);
 
+	/**
+	 * Sends a message informing of the extension uninstall
+	 * @param extensionId
+	 */
 	var sendMessage = function(extensionId) {
 		chrome.runtime.sendMessage({
 			action:			'uninstallItem',
@@ -136,11 +165,13 @@ chrome.management.onUninstalled.addListener(function(extensionId) {
 		});
 	};
 
+	// get extension from store
 	Invigilator.Extension.getFromStore(extensionId, function(extensionInfo) {
 
-		// check extension exists and it's not a dev extension
+		// if extension exists and it's not a dev extension
 		if (!!extensionInfo && !Invigilator.common.Extension.isDev(extensionInfo)) {
 
+			// update extension info
 			Invigilator.Extension.storeUpdate(extensionId, {
 				dateUninstalled: new Date()
 			}, Invigilator.Actions.UNINSTALLED, function(){
@@ -158,12 +189,20 @@ chrome.management.onUninstalled.addListener(function(extensionId) {
 
 });
 
+/**
+ * Whenever an extension is enabled
+ */
 chrome.management.onEnabled.addListener(function(extensionInfo) {
 
+	// if allowing enabled events
 	if (Invigilator.allowEnabledDisabledEvents) {
 
 		console.info('Extension Enabled:', extensionInfo.name);
 
+		/**
+		 * Sends a message informing about the extension enable
+		 * @param extensionId
+		 */
 		var sendMessage = function(extensionId) {
 			chrome.runtime.sendMessage({
 				action:			'updateItem',
@@ -171,8 +210,10 @@ chrome.management.onEnabled.addListener(function(extensionInfo) {
 			});
 		};
 
+		// if not dev extension
 		if (!Invigilator.common.Extension.isDev(extensionInfo)) {
 
+			// update in store
 			Invigilator.Extension.storeUpdate(extensionInfo.id, { enabled: true }, Invigilator.Actions.ENABLED, function(extension) {
 
 				sendMessage(extension.id);
@@ -180,6 +221,7 @@ chrome.management.onEnabled.addListener(function(extensionInfo) {
 			});
 
 		}
+		// dev extension
 		else {
 
 			sendMessage(extensionInfo.id);
@@ -190,12 +232,20 @@ chrome.management.onEnabled.addListener(function(extensionInfo) {
 
 });
 
+/**
+ * Whenever an extension is disabled
+ */
 chrome.management.onDisabled.addListener(function(extensionInfo) {
 
+	// if allowing enabled events
 	if (Invigilator.allowEnabledDisabledEvents) {
 
 		console.info('Extension Disabled:', extensionInfo.name);
 
+		/**
+		 * Sends a message informing about the extension disable
+		 * @param extensionId
+		 */
 		var sendMessage = function(extensionId) {
 			chrome.runtime.sendMessage({
 				action:			'updateItem',
@@ -203,8 +253,10 @@ chrome.management.onDisabled.addListener(function(extensionInfo) {
 			});
 		};
 
+		// if not a dev extension
 		if (!Invigilator.common.Extension.isDev(extensionInfo)) {
 
+			// update store
 			Invigilator.Extension.storeUpdate(extensionInfo.id, { enabled: false }, Invigilator.Actions.DISABLED, function(extension) {
 
 				sendMessage(extension.id);
@@ -212,6 +264,7 @@ chrome.management.onDisabled.addListener(function(extensionInfo) {
 			});
 
 		}
+		// dev extension
 		else {
 
 			sendMessage(extensionInfo.id);

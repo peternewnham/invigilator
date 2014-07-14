@@ -1,9 +1,12 @@
+/**
+ * Manage history logging
+ */
 (function(i) {
 
 	i.History = {
 
 		/**
-		 * Returns the extensions data store from the idb
+		 * Returns the history data store from the idb
 		 * @param callback
 		 */
 		getStore: function(callback) {
@@ -13,7 +16,7 @@
 		},
 
 		/**
-		 * Returns a stored extension from the idb extension store
+		 * Returns a stored history item from the idb extension store
 		 * @param id
 		 * @param callback
 		 */
@@ -23,8 +26,19 @@
 
 		},
 
+		/**
+		 * Object store for disabled history actions
+		 * When reloading an extension it will fire the disable and enable events in quick succession so anything in this store
+		 * will not have the disabled event logged for it
+		 */
 		disabledTimeout:	{},
 
+		/**
+		 * Logs a history item in the idb
+		 * @param {Object} extension	The extension details
+		 * @param {String} action		The action being logged
+		 * @param {Function} callback	Callback after history has been added
+		 */
 		log: function(extension, action, callback) {
 
 			/**
@@ -43,10 +57,9 @@
 
 			console.log('History.log:', extension, action);
 
-			if (action === 'Disabled') {
-
-			}
-
+			/**
+			 * Logs a history item
+			 */
 			var log = function() {
 
 				// get store
@@ -65,28 +78,36 @@
 						enabled:			extension.enabled
 					};
 
+					// save it to the idb
 					var request = store.put(obj);
 
+					// save successful
 					request.onsuccess = function(e) {
 
 						console.log('History.log success:', extension.name);
 
+						// apply callback
 						if (typeof callback === 'function') {
 							callback(extension, action);
 						}
 
-						if (action === 'Disabled') {
+						// remove disabled timeout if exists
+						if (action === i.Actions.DISABLED) {
 							_this.disabledTimeout[extension.id] = null;
+							delete _this.disabledTimeout[extension.id];
 						}
 
 					}
 
+					// save unsuccessful
 					request.onerror = function(e) {
 
 						console.error('Extension.updateItem error', extension.name, e);
 
-						if (action === 'Disabled') {
+						// remove disabled timeout if exists
+						if (action === i.Actions.DISABLED) {
 							_this.disabledTimeout[extension.id] = null;
+							delete _this.disabledTimeout[extension.id];
 						}
 
 					}
@@ -95,22 +116,47 @@
 
 			};
 
+			// apply the save
 			switch (action) {
-				case 'Disabled':
+
+				// Disabled
+				case i.actions.DISABLED:
+
+					// add to disabled timeout queue
 					this.disabledTimeout[extension.id] = setTimeout(log, 100);
+
 					break;
-				case 'Enabled':
+
+				// Enabled
+				case i.actions.ENABLED:
+
+					// if extension is in disabled timeout queue
 					if (!!this.disabledTimeout[extension.id]) {
+
+						// clear timeout and ignore - extension is being reloaded
 						clearTimeout(this.disabledTimeout[extension.id]);
 						delete this.disabledTimeout[extension.id];
+
+						// apply callback
 						callback(extension, action);
+
 					}
+					// not in disabled timeout queue
 					else {
+
+						// log it
 						log();
+
 					}
 					break;
+
+				// everything else
 				default:
+
+					// just log it
 					log();
+					break;
+
 			}
 
 		}

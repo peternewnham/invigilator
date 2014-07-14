@@ -1,3 +1,6 @@
+/**
+ * History actions
+ */
 (function(i) {
 
 	i.Actions = {

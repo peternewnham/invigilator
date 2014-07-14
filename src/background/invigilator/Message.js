@@ -1,3 +1,6 @@
+/**
+ * Background message listeners
+ */
 (function(i) {
 
 	chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {

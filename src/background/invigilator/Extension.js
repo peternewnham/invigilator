@@ -1,6 +1,15 @@
+/**
+ * Background specific extension management
+ */
+
 (function(i) {
 
 	i.Extension = {
+
+		/**
+		 * The remove URL which caches extension information
+		 */
+		REMOTE_URL: 'http://invigilator.blarg.co.uk:3000/',
 
 		/**
 		 * Returns the extensions data store from the idb
@@ -37,7 +46,7 @@
 		/**
 		 * Fetches additional data about the extension
 		 * - owner - the owner of the extension
-		 * - spam - the number of reviews containing "spammy" keywords
+		 * - reviews - the number of reviews containing "spammy" keywords
 		 * @param id
 		 * @param callback
 		 */
@@ -45,7 +54,8 @@
 
 			var _this = this;
 
-			var url = 'http://invigilator.blarg.co.uk:3000/' + id;
+			// generate url to query
+			var url = this.REMOTE_URL + id;
 
 			// try to fetch the webstore page
 			var xhr = new XMLHttpRequest();
@@ -97,8 +107,8 @@
 
 									};
 
+									// post request so it is cached for others
 									xhr.open('POST', 'http://invigilator.blarg.co.uk:3000/' + id, true);
-
 									var params = 'owner=' + (owner || '') + '&reviews=' + reviews;
 									xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 									xhr.send(params);
@@ -118,6 +128,7 @@
 					}
 
 				}
+				// on error just assume there is no data
 				catch (e) {
 					console.error('Data fetch error:' + e);
 					callback({
@@ -132,6 +143,11 @@
 
 		},
 
+		/**
+		 * Scrapes the owner data from the Chrome Store
+		 * @param {String} id			The ID of the extension
+		 * @param {Function} callback	Callback function to apply once the owner has been fetched
+		 */
 		fetchOwner: function(id, callback) {
 
 			// try to fetch the webstore page
@@ -189,6 +205,11 @@
 
 		},
 
+		/**
+		 * Fetches the number of reviews containing certain "spammy" keywords from the Chrome store
+		 * @param {String} id			The ID of the extension
+		 * @param {Function} callback	Callback to apply once the data has been fetched and processed
+		 */
 		fetchReviews: function(id, callback) {
 
 			// number of reviews to get
@@ -213,6 +234,7 @@
 					try {
 
 						// review array is in annotations key, before numAnnotations
+						// so we extract this string and then convert it to a real array
 						var response = this.responseText.trim()
 							.replace(/^[\w\W]+["']annotations["']:/, '')
 							.replace(/,['"]numAnnotations['"]:[\w\W]+$/, '');
@@ -223,17 +245,22 @@
 							throw Error('Reviews not array');
 						}
 
+						// initialise spam count
 						var spamCount = 0;
 
+						// loop through each review
 						for (var i=0,ilen=reviews.length; i<ilen; i++) {
 
+							// get current review and review comments
 							var review = reviews[i];
 							var comment = review.comment && String(review.comment).toLowerCase() || '';
 
+							// check each keyword
 							for (var j=0,jlen=keywords.length; j<jlen; j++) {
 
 								var keyword = keywords[j];
 
+								// if keyword is found then add it to the spam count
 								if (comment.indexOf(keyword) >= 0) {
 
 									spamCount++;
@@ -244,6 +271,7 @@
 
 						}
 
+						// apply callback
 						callback(spamCount);
 
 					}
@@ -292,15 +320,25 @@
 
 		},
 
-		fetchIconDataUrl: function(extension, callback) {
+		/**
+		 * Gets the dataurl string for an extension icon
+		 * This is needed if the extension is uninstalled as we won't have access to it anymore
+		 * @param {String} extensionId	The ID of the extension
+		 * @param {Function} callback	The callback to call when the dataurl is fetched
+		 */
+		fetchIconDataUrl: function(extensionId, callback) {
 
-			var iconUrl = i.common.Extension.getIcon(extension, 48, false);
+			// get the icon url
+			var iconUrl = i.common.Extension.getIcon(extensionId, 48, false);
 
+			// using default icon so don't bother getting dataurl
 			if (iconUrl === i.common.Extension.DEFAULT_ICON) {
 				callback(null);
 			}
+			// extension has it's own icon
 			else {
 
+				// load it as an image object and then dump it into a canvas so the dataurl can be extracted
 				var image = new Image;
 				image.onload = function() {
 					var canvas = document.createElement('canvas');
@@ -316,12 +354,20 @@
 
 		},
 
+		/**
+		 * Checks whether the owner of an extension has changed
+		 * @param {Object} extension	Extension details
+		 * @param {String} newOwner		Name of the new owner
+		 */
 		checkOwnerChange: function(extension, newOwner) {
 
+			// new owner is present and different from the current one
 			if (newOwner !== null && extension.owner !== newOwner) {
 
+				// send owner change notification
 				i.Notify.owner(extension);
 
+				// save new owner
 				this.storeUpdate(extension.id, {
 					owner: newOwner
 				}, i.Actions.OWNER_CHANGE);
@@ -330,24 +376,32 @@
 
 		},
 
+		/**
+		 * Checks all extensions for owner changes and bad reviews
+		 */
 		checkAllData: function() {
 
 			var _this = this;
 
+			// loop through each extension in the idb
 			i.common.IndexedDB.eachFromStore('extensions', null, function(extension) {
 
+				// only check installed extensions
 				if (extension.dateUninstalled === null) {
 
+					// fetch data
 					_this.fetchData(extension.id, function(data) {
 
 						console.log('Data checked:', extension.name, data);
 
+						// check owner change
 						if (data.owner) {
 
 							_this.checkOwnerChange(extension, data.owner);
 
 						}
 
+						// if some bad reviews detected then notify the user
 						if (data.reviews > 0) {
 
 							i.Notify.reviews(extension, data.reviews);
@@ -362,6 +416,12 @@
 
 		},
 
+		/**
+		 * Updates an extension in the idb and logs it in history
+		 * @param {Object} extension	The extension data
+		 * @param {String} action		The action being performed
+		 * @param {Function} callback	Callback to apply once done
+		 */
 		updateItem: function(extension, action, callback) {
 
 			console.log('Extension.updateItem:', extension, action);
@@ -369,6 +429,7 @@
 			// get store
 			this.getStore(function(store) {
 
+				// save extension in idb
 				var request = store.put(extension);
 
 				request.onsuccess = function(e) {
@@ -396,8 +457,8 @@
 
 		/**
 		 * Adds a new extension data to the store
-		 * @param extension
-		 * @param action
+		 * @param {Object} extension	Extension data
+		 * @param {String} action		The action being performed
 		 */
 		storeAdd: function(extension, action) {
 
@@ -414,10 +475,12 @@
 
 				extension.owner = data.owner;
 
+				// get icon data url
 				_this.fetchIconDataUrl(extension, function(dataUrl) {
 
 					extension.iconDataUrl = dataUrl;
 
+					// save item
 					_this.updateItem(extension, action);
 
 				});
@@ -428,9 +491,10 @@
 
 		/**
 		 * Update the store extension and refresh it's data from the live version
-		 * @param extensionId
-		 * @param data
-		 * @param action
+		 * @param {String} extensionId	The extension ID
+		 * @param {Object} data			Additional data to save against the extension
+		 * @param {String} action		The action being performed
+		 * @param {Function} callback	Callback to call once done
 		 */
 		storeUpdateRefresh: function(extensionId, data, action, callback) {
 
@@ -438,10 +502,13 @@
 
 			var _this = this;
 
+			// get extension data from the idb
 			this.getFromStore(extensionId, function(storeExtension) {
 
+				// then get "live" extension data from the chrome api
 				_this.getLive(extensionId, function(liveExtension) {
 
+					// is store extension doesn't exist then use the live extension
 					if (!storeExtension) {
 						storeExtension = liveExtension;
 					}
@@ -451,7 +518,7 @@
 						storeExtension[field] = liveExtension[field];
 					}
 
-					// update additional fields
+					// update additional fields if set
 					if (!!data) {
 						for (var field in data) {
 							storeExtension[field] = data[field];
@@ -461,6 +528,7 @@
 					// get extension owner
 					_this.fetchData(extensionId, function(data) {
 
+						// owner exists
 						if (!!data && !!data.owner) {
 
 							// check for owner change
@@ -479,6 +547,7 @@
 								storeExtension.iconDataUrl = dataUrl;
 							}
 
+							// update extension in idb
 							_this.updateItem(storeExtension, action, callback);
 
 						});
@@ -493,9 +562,10 @@
 
 		/**
 		 * Update the store but only the fields specified in data
-		 * @param extensionId
-		 * @param data
-		 * @param action
+		 * @param {String} extensionId	The extension ID
+		 * @param {Object} data			The data to save against the extension
+		 * @param {String} action		The action being performed
+		 * @param {Function} callback	Callback to call once done
 		 */
 		storeUpdate: function(extensionId, data, action, callback) {
 
@@ -503,6 +573,7 @@
 
 			var _this = this;
 
+			// get extension data from the idb
 			this.getFromStore(extensionId, function(storeExtension) {
 
 				// apply overrides
@@ -512,6 +583,7 @@
 					}
 				}
 
+				// update item
 				_this.updateItem(storeExtension, action, callback);
 
 			});
