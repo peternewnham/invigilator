@@ -163,6 +163,12 @@
 			// icon
 			itemHtml += '<div class="icon">';
 			itemHtml += '<img src="' + i.common.Extension.getIcon(item.id, 48, !item.enabled) + '">';
+
+			if (item.enabled && !!item.optionsUrl) {
+				itemHtml += '<div class="options"><a href="' + item.optionsUrl + '">' +
+								'<span class="glyphicon glyphicon-cog"></span> Options</a></div>';
+			}
+
 			itemHtml += '</div>';
 
 			// details
@@ -287,7 +293,7 @@
 			var enableDisabled = item.mayDisable ? '' : 'disabled';
 
 			itemHtml += '<div>';
-			itemHtml += '<label class="checkbox ' + enableDisabled + '">';
+			itemHtml += '<label class="' + enableDisabled + '">';
 			if (item.enabled) {
 				itemHtml += '<input class="action-enable" type="checkbox" checked ' + enableDisabled + '> Enabled';
 			}
