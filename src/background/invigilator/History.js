@@ -120,7 +120,7 @@
 			switch (action) {
 
 				// Disabled
-				case i.actions.DISABLED:
+				case i.Actions.DISABLED:
 
 					// add to disabled timeout queue
 					this.disabledTimeout[extension.id] = setTimeout(log, 100);
@@ -128,7 +128,7 @@
 					break;
 
 				// Enabled
-				case i.actions.ENABLED:
+				case i.Actions.ENABLED:
 
 					// if extension is in disabled timeout queue
 					if (!!this.disabledTimeout[extension.id]) {
