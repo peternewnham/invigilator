@@ -103,7 +103,7 @@
 										// exclusion in past so remove it
 										else {
 
-											i.common.Settings.removeExclusion(options.exclusionKey, options.extensionId);
+											i.common.Extension.removeExclusion(options.exclusionKey, options.extensionId);
 
 										}
 
