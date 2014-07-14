@@ -1,7 +1,13 @@
+/**
+ * Extension utilities
+ */
 (function(i) {
 
 	i.common.Extension = {
 
+		/**
+		 * Default icon to use for extensions if an extension doesn't have it's own icon
+		 */
 		DEFAULT_ICON: 'images/extension.png',
 
 		/**
@@ -30,10 +36,9 @@
 
 			for (var field in extension) {
 
+				// convert dates to timestamps
 				if (extension[field] instanceof Date) {
-
 					extension[field] = 'Date|' + extension[field].getTime();
-
 				}
 
 			}
@@ -51,6 +56,7 @@
 
 			for (var field in extension) {
 
+				// convert timestamps back to date objects
 				if (/^Date\|/.test(extension[field])) {
 
 					var time = parseInt(extension[field].replace(/^Date|/, ''), 10);
@@ -64,6 +70,10 @@
 
 		},
 
+		/**
+		 * Loop through each "live" installed extension and apply a callback with the extension as the only parameter
+		 * @param {Function} callback
+		 */
 		each: function(callback) {
 
 			chrome.management.getAll(function(extensions) {
@@ -80,6 +90,10 @@
 
 		},
 
+		/**
+		 * Returns all "live" installed extensions, sorted by name
+		 * @param {Function} callback
+		 */
 		getAll: function(callback) {
 
 			// sort extensions by name as it's more convenient
@@ -97,6 +111,11 @@
 
 		},
 
+		/**
+		 * Returns the details of a specific "live" extension
+		 * @param {String} id			Extension id
+		 * @param {Function} callback	Callback function with extension details passed as parameter
+		 */
 		get: function(id, callback) {
 
 			chrome.management.getAll(function(extensions) {
@@ -116,18 +135,34 @@
 
 		},
 
+		/**
+		 * Enables a specific extension
+		 * @param {String} id			Extension ID
+		 * @param {Function} callback	Callback after extension is enabled
+		 */
 		enable: function(id, callback) {
 
 			this.setEnabled(id, true, callback);
 
 		},
 
+		/**
+		 * Disables a specific extension
+		 * @param {String} id			Extension ID
+		 * @param {Function} callback	Callback after extension is disabled
+		 */
 		disable: function(id, callback) {
 
 			this.setEnabled(id, false, callback);
 
 		},
 
+		/**
+		 * Sets the enabled status for an extension
+		 * @param {String} id			Extension ID
+		 * @param {Boolean} enabled		Whether extension is enabled
+		 * @param {Function} callback	Callback function after extension is enabled/disabled
+		 */
 		setEnabled: function(id, enabled, callback) {
 
 			console.log('Extension.setEnabled Request:', id, enabled && 'enabled' || 'disabled');
@@ -136,23 +171,38 @@
 
 		},
 
+		/**
+		 * "Reloads" an extension.
+		 * Not a real reload as such - it will just disable and then enable the extension quickly
+		 * @param {String} id			Extension id
+		 * @param {Function} callback	Callback after reload
+		 */
 		reload: function(id, callback) {
 
 			console.log('Extension.reload Request:', id);
 
 			var _this = this;
 
+			// first disable
 			this.disable(id, function() {
 
 				// set a short timeout as it looks better to see things working :)
 				setTimeout(function() {
+
+					// then enable
 					_this.enable(id, callback);
+
 				}, 300);
 
 			});
 
 		},
 
+		/**
+		 * Uninstalls an extension
+		 * @param {String} id			Extension ID
+		 * @param {Function} callback	Callback after extension is uninstalled
+		 */
 		uninstall: function(id, callback) {
 
 			console.log('Extension.uninstall request:', id);
@@ -161,6 +211,13 @@
 
 		},
 
+		/**
+		 * Gets the icon for an extension, in a specified size and optionally grey
+		 * @param {String} extensionId	Extension ID
+		 * @param {Number} size			The size of icon to return
+		 * @param {Boolean} gray		Whether to return the icon in grayscale
+		 * @returns {string}
+		 */
 		getIcon: function(extensionId, size, gray) {
 
 			var iconUrl = 'chrome://extension-icon/' + extensionId + '/' + size + '/1';
@@ -171,78 +228,64 @@
 
 			return iconUrl;
 
-			// no icon so show default
-			if (!extension.icons) {
-				return this.DEFAULT_ICON;
-			}
-			else {
-
-				var bestSize = 0;
-				var bestUrl = '';
-
-				for (var j=0; j<extension.icons.length; j++) {
-
-					var icon = extension.icons[j];
-
-					if (!!size && icon.size == size) {
-						bestSize = icon.size;
-						bestUrl = icon.url;
-						break;
-					}
-					else if (icon.size > bestSize) {
-						bestSize = icon.size;
-						bestUrl = icon.url;
-					}
-
-				}
-
-				if (gray) {
-					bestUrl += '?grayscale=true';
-				}
-
-				return bestUrl;
-
-			}
-
 		},
 
+		/**
+		 * Adds a notification exclusion for an extension
+		 * @param {String} key				The storage key for the type of exclusion
+		 * @param {String} extensionId		The extension ID
+		 * @param {String} extensionName	The extension name
+		 * @param {Boolean} forever			Whether the exclusion is forever, or just for 1 month
+		 * @param {Function} callback		Callback once exclusion is added
+		 */
 		addExclusion: function(key, extensionId, extensionName, forever, callback) {
 
+			// get exclusion settings
 			i.common.Settings.getSync(key, function(exclusions) {
 
-				if (!exclusions.hasOwnProperty(extensionId)) {
+				// default to forever exclusion
+				var date = false;
 
-					var date = false;
-
-					if (!forever) {
-						date = new Date();
-						date.setMonth(date.getMonth()+1);
-						date.setHours(0, 0, 0, 0);
-						date = date.getTime();
-					}
-
-					exclusions[extensionId] = {
-						name: extensionName,
-						date: date
-					};
-
-					i.common.Settings.setSync(key, exclusions, callback);
-
+				// set date 1 month in future if not forever
+				if (!forever) {
+					date = new Date();
+					date.setMonth(date.getMonth()+1);
+					date.setHours(0, 0, 0, 0);
+					date = date.getTime();
 				}
+
+				// add exclusion
+				exclusions[extensionId] = {
+					name: extensionName,
+					date: date
+				};
+
+				// and save
+				i.common.Settings.setSync(key, exclusions, callback);
 
 			});
 
 		},
 
-		removeExclusion: function(type, extensionId, callback) {
+		/**
+		 * Removes a notification exclusion for an extension
+		 * @param {String} key			The storage key for the type of exclusion
+		 * @param {String} extensionId	The extension ID
+		 * @param {Function} callback	Callback once exclusion is added
+		 */
+		removeExclusion: function(key, extensionId, callback) {
 
-			i.common.Settings.getSync(type, function(exclusions) {
+			// get exclusion settings
+			i.common.Settings.getSync(key, function(exclusions) {
 
+				// if exclusion exists
 				if (exclusions.hasOwnProperty(extensionId)) {
 
+					// remove it
 					delete exclusions[extensionId];
 
-					i.common.Settings.setSync(type, exclusions, callback);
+					// and save
+					i.common.Settings.setSync(key, exclusions, callback);
 
 				}
 
