@@ -34,7 +34,7 @@ var Invigilator = {
 		 * Sometimes scrollbar does not show so this tries to force it to do so
 		 */
 		$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-			3
+
 			// create a div, add it to the page and then remove it
 			var d = document.createElement('div');
 			d.style.setProperty('height', '5px');

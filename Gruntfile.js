@@ -59,7 +59,6 @@ module.exports = function (grunt) {
 			vendor_js: {
 				files: {
 					'build/vendor/jquery.js': 'bower_components/jquery/dist/jquery.min.js',
-					'build/vendor/jquery.min.map': 'bower_components/jquery/dist/jquery.min.map',
 					'build/vendor/moment.js': 'bower_components/momentjs/min/moment-with-langs.min.js',
 					'build/vendor/bootstrap.js': 'bower_components/bootstrap/dist/js/bootstrap.min.js'
 				}
@@ -136,8 +135,18 @@ module.exports = function (grunt) {
 					beautify: false
 				},
 				files: {
-					'build/background.js': 'src/background/**/*.js',
-					'build/popup.js': 'src/popup/js/**/*.js'
+					'build/background.js': [
+						'src/background/**/*.js',
+						'src/common/**/*.js'
+					],
+					'build/popup.js': [
+						'src/popup/js/**/*.js',
+						'src/common/**/*.js'
+					],
+					'build/options.js': [
+						'src/options/js/**/*.js',
+						'src/common/**/*.js'
+					]
 				}
 			}
 
@@ -213,7 +222,7 @@ module.exports = function (grunt) {
 			test: {
 				cwd: 'build/',
 				src: 'build/**/*',
-				dest: 'copyplus.zip'
+				dest: 'invigilator.zip'
 			}
 		}
 
@@ -250,7 +259,8 @@ module.exports = function (grunt) {
 		'clean',
 		'copy',
 		'js_build',
-		'less'
+		'less',
+		'zip'
 	]);
 
 	/*

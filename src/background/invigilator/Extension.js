@@ -330,7 +330,7 @@
 
 			// get the icon url
 			var iconUrl = i.common.Extension.getIcon(extensionId, 48, false);
-			
+
 			// using default icon so don't bother getting dataurl
 			if (iconUrl === i.common.Extension.DEFAULT_ICON) {
 				callback(null);
