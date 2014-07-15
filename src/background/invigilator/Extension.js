@@ -330,7 +330,7 @@
 
 			// get the icon url
 			var iconUrl = i.common.Extension.getIcon(extensionId, 48, false);
-
+			
 			// using default icon so don't bother getting dataurl
 			if (iconUrl === i.common.Extension.DEFAULT_ICON) {
 				callback(null);
@@ -476,7 +476,7 @@
 				extension.owner = data.owner;
 
 				// get icon data url
-				_this.fetchIconDataUrl(extension, function(dataUrl) {
+				_this.fetchIconDataUrl(extension.id, function(dataUrl) {
 
 					extension.iconDataUrl = dataUrl;
 
@@ -541,7 +541,7 @@
 						}
 
 						// get data url
-						_this.fetchIconDataUrl(extension, function(dataUrl) {
+						_this.fetchIconDataUrl(extensionId, function(dataUrl) {
 
 							if (!!dataUrl) {
 								storeExtension.iconDataUrl = dataUrl;

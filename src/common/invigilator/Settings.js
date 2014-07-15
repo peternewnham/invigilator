@@ -75,9 +75,9 @@
 		 */
 		defaultLocalSettings: {
 
-			//nextDataCheck: (+new Date) + (60 * 60 * 24 * 1000)
 			/**
 			 * Timestamp of the next data check to perform
+			 * Default is to check 60 seconds after installing the extension
 			 * @var {Number}
 			 */
 			nextDataCheck: (+new Date) + (60 * 1000)
