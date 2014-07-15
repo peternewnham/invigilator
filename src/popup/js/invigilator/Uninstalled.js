@@ -1,13 +1,24 @@
+/**
+ * Uninstalled tab functionality
+ */
 (function(i) {
 
 	i.Uninstalled = {
 
+		/**
+		 * Generate content
+		 */
 		generate: function() {
 
 			var _this = this;
 
+			// wipe existing content
+			$('#uninstalled').html('');
+
+			// get all extensions from the store
 			i.common.IndexedDB.getAllFromStore('extensions', { direction: 'next' }, function(extensions) {
 
+				// group uninstalled extensions by type
 				var types = {
 					extension: {
 						title:	'Uninstalled Extensions',
@@ -26,26 +37,40 @@
 					}
 				};
 
+				// track whether anything has been uninstalled
+				var hasUninstalled = false;
+
 				console.group('Uninstalled.generate');
 
+				// loop through each extension
 				for (var j=0; j<extensions.length; j++) {
 
+					// get current extension
 					var extension = extensions[j];
 
+					// if extension has been uninstalled add it to one of the groups
 					if (extension.dateUninstalled !== null) {
 
 						console.log(extension.name, extension);
 
+						// update has uninstalled flag
+						hasUninstalled = true;
+
 						switch (extension.type) {
 
+							// extensions
 							case 'extension':
 								types.extension.items.push(extension);
 								break;
+
+							// apps
 							case 'hosted_app':
 							case 'packaged_app':
 							case 'legacy_packaged_app':
 								types.app.items.push(extension);
 								break;
+
+							// themes
 							case 'theme':
 								types.theme.items.push(extension);
 								break;
@@ -58,22 +83,27 @@
 
 				}
 
-				var noTypes = true;
+				// if something has been uninstalled
+				if (hasUninstalled) {
 
-				for (var type in types) {
+					// loop through each group
+					for (var type in types) {
 
-					if (types[type].items.length > 0) {
+						// if group has items
+						if (types[type].items.length > 0) {
 
-						_this.addType(types[type]);
+							// add content for the group
+							_this.addType(types[type]);
 
-						noTypes = false;
+						}
 
 					}
 
 				}
+				// nothing uninstalled
+				else {
 
-				if (noTypes) {
-
+					// add the empty message
 					_this.addEmpty();
 
 				}
@@ -84,7 +114,13 @@
 
 		},
 
+		/**
+		 * Adds an extension type group
+		 * @param {Object} type		The type and extensions in it
+		 */
 		addType: function(type) {
+
+			// generate html
 
 			var typeHtml = '<div class="type">';
 
@@ -98,6 +134,7 @@
 
 			for (var j=0; j<type.items.length; j++) {
 
+				// add extension
 				typeHtml += this.addItem(type.items[j]);
 
 			}
@@ -106,10 +143,16 @@
 
 			typeHtml += '</div>';
 
+			// add it to the tab content
 			$('#uninstalled').append(typeHtml);
 
 		},
 
+		/**
+		 * Generates the html for an uninstalled extension
+		 * @param {Object} item		The extension details
+		 * @returns {string}
+		 */
 		addItem: function(item) {
 
 			// open item
@@ -124,6 +167,12 @@
 
 		},
 
+		/**
+		 * Generate the html for an uninstalled extension
+		 * @todo Looks like it should be combined with addItem but they were made as separate functions and not sure why now
+		 * @param {Object} item		Extension details
+		 * @returns {string}
+		 */
 		generateItemHtml: function(item) {
 
 			var itemHtml = '';
@@ -212,7 +261,7 @@
 			// open actions
 			itemHtml += '<div class="actions">';
 
-			// launch app
+			// reinstalled
 			itemHtml += '<div>';
 			itemHtml += '<a href="https://chrome.google.com/webstore/detail/' + item.id + '" class="btn btn-info">Reinstall <span class="glyphicon glyphicon-play-circle"></span></a>';
 			itemHtml += '</div>';
@@ -224,6 +273,9 @@
 
 		},
 
+		/**
+		 * Adds a "nothing uninstalled" message to the tab content
+		 */
 		addEmpty: function() {
 
 			$('#uninstalled').html([
@@ -234,6 +286,7 @@
 
 	};
 
+	// initialise
 	$(function() {
 		i.Uninstalled.generate();
 	});

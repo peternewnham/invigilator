@@ -1,15 +1,24 @@
+/**
+ * Installed tab functionality
+ */
 (function(i) {
 
 	i.Installed = {
 
+		/**
+		 * Generate the tab content
+		 */
 		generate: function() {
 
 			var _this = this;
 
+			// get all "live" extensions extensions
 			i.common.Extension.getAll(function(liveExtensions) {
 
+				// get all "stored" extensions
 				i.common.IndexedDB.getAllFromStore('extensions', { direction: 'next' }, function(storeExtensions) {
 
+					// create extension groups
 					var types = {
 						dev: {
 							title:	'In Development',
@@ -17,17 +26,17 @@
 							items:	[]
 						},
 						extension: {
-							title:	'Your Extensions',
+							title:	'Extensions',
 							icon:	'images/extension.png',
 							items:	[]
 						},
 						app: {
-							title:	'Your Apps',
+							title:	'Apps',
 							icon:	'images/app.png',
 							items:	[]
 						},
 						theme: {
-							title:	'Your Themes',
+							title:	'Themes',
 							icon:	'',
 							items:	[]
 						}
@@ -35,20 +44,25 @@
 
 					console.group('Installed.generate');
 
+					// loop through each live extensions
 					for (var j=0; j<liveExtensions.length; j++) {
 
+						// get current live extension
 						var extension = liveExtensions[j];
 
 						console.log(extension.name, extension);
 
+						// in dev mode
 						if (i.common.Extension.isDev(extension)) {
 
+							// add it to the dev group
 							types.dev.items.push(extension);
 
 						}
+						// not in dev mode
 						else {
 
-							// get stored extension
+							// get the stored extension for the live extension
 							for (var k=0; k<storeExtensions.length; k++) {
 								var storeExtension = storeExtensions[k];
 								if (storeExtension.id === extension.id) {
@@ -57,16 +71,22 @@
 								}
 							}
 
+							// add it to a group
 							switch (extension.type) {
 
+								// extensions
 								case 'extension':
 									types.extension.items.push(extension);
 									break;
+
+								// apps
 								case 'hosted_app':
 								case 'packaged_app':
 								case 'legacy_packaged_app':
 									types.app.items.push(extension);
 									break;
+
+								// themes
 								case 'theme':
 									types.theme.items.push(extension);
 									break;
@@ -79,10 +99,13 @@
 
 					console.groupEnd();
 
+					// loop through each type group
 					for (var type in types) {
 
+						// if type group has items
 						if (types[type].items.length > 0) {
 
+							// add the group to the tab content
 							_this.addType(types[type]);
 
 						}
@@ -95,9 +118,17 @@
 
 		},
 
+		/**
+		 * Add a type group to the tab content
+		 * @param {Object} type	The type group details and items
+		 */
 		addType: function(type) {
 
+			// generate html
+
 			var typeHtml = '<div class="type">';
+
+				// group icon and header
 
 				typeHtml += '<h3';
 				if (type.icon) {
@@ -107,8 +138,10 @@
 
 				typeHtml += '<div class="items">';
 
+				// loop through each item in the group
 				for (var j=0; j<type.items.length; j++) {
 
+					// generate item html and add it to the group
 					typeHtml += this.addItem(type.items[j]);
 
 				}
@@ -117,13 +150,19 @@
 
 			typeHtml += '</div>';
 
+			// add group html to the tab content
 			$('#installed').append(typeHtml);
 
 		},
 
+		/**
+		 * Generates the container and item html for an extension
+		 * @param {Object} item		Extension details
+		 * @returns {string}
+		 */
 		addItem: function(item) {
 
-			// open item
+			// open item container
 			var itemHtml = '<div id="installed-' + item.id + '" class="item clearfix';
 			if (!item.enabled) {
 				itemHtml += ' item-disabled';
@@ -132,17 +171,23 @@
 
 			itemHtml += this.generateItemHtml(item);
 
-			// close item
+			// close item container
 			itemHtml += '</div>';
 
 			return itemHtml;
 
 		},
 
+		/**
+		 * Updates an extension
+		 * @param {Object} item		Extension details
+		 */
 		updateItem: function(item) {
 
+			// get container
 			var itemDiv = $('#installed-' + item.id)
 
+			// toggle disabled class
 			if (item.enabled) {
 				itemDiv.removeClass('item-disabled');
 			}
@@ -150,12 +195,19 @@
 				itemDiv.addClass('item-disabled');
 			}
 
+			// regenerate and replace html
 			itemDiv.html(this.generateItemHtml(item));
 
 		},
 
+		/**
+		 * Generates the item html for an extension
+		 * @param {Object} item		Extension details
+		 * @returns {string}
+		 */
 		generateItemHtml: function(item) {
 
+			// set dev mode flag
 			var devMode = i.common.Extension.isDev(item);
 
 			var itemHtml = '';
@@ -164,6 +216,7 @@
 			itemHtml += '<div class="icon">';
 			itemHtml += '<img src="' + i.common.Extension.getIcon(item.id, 48, !item.enabled) + '">';
 
+			// add options url if there is one and extension is enabled
 			if (item.enabled && !!item.optionsUrl) {
 				itemHtml += '<div class="options"><a href="' + item.optionsUrl + '">' +
 								'<span class="glyphicon glyphicon-cog"></span> Options</a></div>';
@@ -185,6 +238,7 @@
 			// description
 			itemHtml += '<p class="description">' + item.description + '</p>';
 
+			// extension not in dev mode
 			if (!devMode) {
 
 				// open owner and sites
@@ -201,25 +255,30 @@
 				}
 				itemHtml += '</span>';
 
-				// urls
+				// set webstore and homepage url as the same
 				var homepageUrl = item.homepageUrl;
 				var webstoreUrl = homepageUrl;
-				//
+
+				// if webstore url is from the chrome store then there is no alternative homepage so remove it
 				if (/^https:\/\/chrome\.google\.com\/webstore/.test(webstoreUrl)) {
 					homepageUrl = '';
 				}
+				// otherwise there is a different webstore and homepage url so set both
 				else {
 					webstoreUrl = 'https://chrome.google.com/webstore/detail/' + item.id;
 				}
 
+				// webstore url
 				if (webstoreUrl !== '') {
 					itemHtml += '<span><a href="' + webstoreUrl + '">Visit Webstore Page</a></span>';
 				}
 
+				// homepage url
 				if (homepageUrl !== '') {
 					itemHtml += '<span><a href="' + homepageUrl + '">Visit Homepage</a></span>';
 				}
 
+				// extension tab link
 				itemHtml += '<span><a href="chrome://extensions/?id=' + item.id + '">Open in Extensions Tab</a></span>';
 
 				// close additional details
@@ -259,21 +318,6 @@
 				itemHtml += '<a href="#" class="btn btn-success btn-sm action-reload"><span class="glyphicon glyphicon-refresh"></span> Reload Extension</a>';
 
 			}
-
-			// open permissions
-			/*itemHtml += '<div class="permissions">';
-
-			 itemHtml += '<label>Permissions:</label> ';
-
-			 if (item.permissions.length > 0) {
-			 itemHtml += item.permissions.join(', ');
-			 }
-			 else {
-			 itemHtml += 'None';
-			 }
-
-			 // close permissions
-			 itemHtml += '</div>';*/
 
 			// close details
 			itemHtml += '</div>';
@@ -327,8 +371,13 @@
 
 		},
 
+		/**
+		 * Remove an item from the tab content
+		 * @param {String} itemId	Extension id
+		 */
 		removeItem: function(itemId) {
 
+			// fade it out and then remove
 			$('#installed-' + itemId).fadeOut(500, function() {
 				$('#installed-' + itemId).remove();
 			});
@@ -337,26 +386,31 @@
 
 		/**
 		 * Returns the extension id from an element within an item div
-		 * @param el
+		 * @param {HTMLElement} el	The element to extract the id from
 		 * @returns {string}
 		 */
 		getItemId: function(el) {
 
+			// find closest div with "item" class and get id
 			return $(el).closest('.item').attr('id').replace(/^installed\-/, '');
 
 		},
 
+		/**
+		 * Initialise event listeners
+		 */
 		initEvents: function() {
 
 			var _this = this;
 
-			// enable/disable extension
+			/*
+			 * Enable/disable extension
+			 */
 			$('body').on('change', '.action-enable', function(e) {
 				if (this.checked) {
 					// track event
 					i.common.Analytics.event('Extension', 'Enable');
 					i.common.Extension.enable(_this.getItemId(this));
-
 				}
 				else {
 					// track event
@@ -365,7 +419,9 @@
 				}
 			});
 
-			// reload developer extensions
+			/*
+			 * "Reload" developer extensions
+			 */
 			$('body').on('click', '.action-reload', function(e) {
 
 				e.preventDefault();
@@ -377,8 +433,8 @@
 
 			});
 
-			/**
-			 * Uninstall
+			/*
+			 * Initialise uninstall extension
 			 */
 
 			// show confirm
@@ -395,7 +451,9 @@
 
 			});
 
-			// cancel uninstall
+			/*
+			 * Cancel uninstall
+			 */
 			$('body').on('click', '.action-cancel-uninstall', function(e) {
 				e.preventDefault();
 
@@ -407,7 +465,9 @@
 				ct.find('.confirm').addClass('hidden');
 			});
 
-			// confirm uninstall
+			/*
+			 * Confirm uninstall
+			 */
 			$('body').on('click', '.action-confirm-uninstall', function(e) {
 				e.preventDefault();
 
@@ -417,7 +477,9 @@
 				Invigilator.common.Extension.uninstall(_this.getItemId(this));
 			});
 
-			// app launch
+			/*
+			 * App launch
+			 */
 			$('body').on('click', '.app-launch', function() {
 				// track event
 				i.common.Analytics.event('Extension', 'App Launch');
@@ -427,6 +489,7 @@
 
 	};
 
+	// initialise
 	$(function() {
 
 		i.Installed.generate();
