@@ -11,7 +11,7 @@ Invigilator is a [Google Chrome](https://www.google.com/chrome) extension for ma
 - Alert you if the owner of an extension has changed
 - Alert you if reviews containing adware/spyware keywords are detected
 
-### [Install the addon here from the Chrome Web Store](https://chrome.google.com/webstore/detail/page-ruler/jlpkojjdgbllmedoapgfodplfhcbnbpn)
+### [Install the addon here from the Chrome Web Store](https://chrome.google.com/webstore/detail/invigilator/gmhgjkobbgamddnpceaieojogffcmckh)
 
 Please use the [issue tracker](https://github.com/wrakky/invigilator/issues) to report any bugs or make suggestions
 
