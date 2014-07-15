@@ -5,7 +5,7 @@
 		"description": "Extension name"
 	},
 	"extDescription": {
-		"message": "Monitors extensions and warns you when permissions are updated",
+		"message": "Invigilator watches over you and keeps you safe. Extension management with built in notifications when potential risks are detected.",
 		"description": "Extension description"
 	}
 
