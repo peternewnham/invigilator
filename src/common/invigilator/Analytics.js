@@ -29,16 +29,25 @@ ga('set', 'checkProtocolTask', function(){});
 		 */
 		checkEnabled: function(callback) {
 
-			i.common.Settings.getSync('statistics', function(enabled) {
+			if (i.common.Util.isDevMode()) {
 
-				if (!enabled) {
-					console.log('statistics disabled');
-				}
-				else {
-					callback();
-				}
+				console.warn('Analytics disabled in dev mode');
 
-			});
+			}
+			else {
+
+				i.common.Settings.getSync('statistics', function(enabled) {
+
+					if (!enabled) {
+						console.warn('statistics disabled');
+					}
+					else {
+						callback();
+					}
+
+				});
+
+			}
 
 		},
 

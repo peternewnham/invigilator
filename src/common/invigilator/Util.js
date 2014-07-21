@@ -57,6 +57,20 @@
 
 			return to;
 
+		},
+
+		/**
+		 * Returns whether the extension is in dev mode or not
+		 * @returns {boolean}
+		 */
+		isDevMode: function() {
+
+			// get manifest details
+			var manifest = chrome.runtime.getManifest();
+
+			// dev mode manifest will not had the update_url property
+			return !manifest.hasOwnProperty('update_url');
+
 		}
 
 	};
