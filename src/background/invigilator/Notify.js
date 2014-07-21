@@ -311,29 +311,47 @@
 		 */
 		reviews: function(extension, count) {
 
-			// generate notification id
-			var notificationId = 'invigilator-reviews-' + extension.id;
+			var _this = this;
 
-			// generate message
-			var reviewPlural = count > 1 ? 'reviews' : 'review';
-			var havePlural = count > 1 ? 'have' : 'has';
-			var message = count + ' recent ' + reviewPlural + ' for "' + extension.name + '" ' + havePlural + ' been detected as potentially referring to adverts and/or spyware.';
+			// get minimum review threshold
+			i.common.Settings.getSync('reviewWarningMinThreshold', function(reviewWarningMinThreshold) {
 
-			// create and show the notification
-			this.showNotification({
-				name:			'reviews',
-				extensionId:	extension.id,
-				extensionName:	extension.name,
-				showKey:		'showReviewWarningNotifications',
-				exclusionKey:	'reviewWarningNotificationExclusions',
-				notificationId:	notificationId,
-				clickType:		'reviews',
-				overrideIcon:	true,
-				notificationOptions: {
-					title: 		'Review Alert',
-					message:	message,
-					iconUrl:	'images/notification-warning.png'
+				// if the number of reviews is greater than the threshold then show the notification
+				if (reviewWarningMinThreshold <= count) {
+
+					// generate notification id
+					var notificationId = 'invigilator-reviews-' + extension.id;
+
+					// generate message
+					var reviewPlural = count > 1 ? 'reviews' : 'review';
+					var havePlural = count > 1 ? 'have' : 'has';
+					var message = count + ' recent ' + reviewPlural + ' for "' + extension.name + '" ' + havePlural + ' been detected as potentially referring to adverts and/or spyware.';
+
+					// create and show the notification
+					_this.showNotification({
+						name:			'reviews',
+						extensionId:	extension.id,
+						extensionName:	extension.name,
+						showKey:		'showReviewWarningNotifications',
+						exclusionKey:	'reviewWarningNotificationExclusions',
+						notificationId:	notificationId,
+						clickType:		'reviews',
+						overrideIcon:	true,
+						notificationOptions: {
+							title: 		'Review Alert',
+							message:	message,
+							iconUrl:	'images/notification-warning.png'
+						}
+					});
+
 				}
+				// minimum threshold not met so don't show it
+				else {
+
+					console.warn('Minimum review threshold of', reviewWarningMinThreshold, 'not met:', count);
+
+				}
+
 			});
 
 		}

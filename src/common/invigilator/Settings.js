@@ -38,6 +38,11 @@
 			updateNotificationExclusions: {},
 
 			/**
+			 * The minimum number of flagged reviews to show the review warning notification
+			 */
+			reviewWarningMinThreshold: 5,
+
+			/**
 			 * Whether to show review warning notifications
 			 * @var {Boolean}
 			 */
@@ -82,6 +87,11 @@
 			 */
 			nextDataCheck: (+new Date) + (60 * 1000),
 
+			/**
+			 * Whether there is a new update
+			 * This will be set to true when Invigilator is updated and set back to false the first
+			 * time the user clicks the browserAction button
+			 */
 			newUpdate: false
 
 		},

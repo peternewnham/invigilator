@@ -22,6 +22,9 @@
 				// show or hide the exclusion table
 				i.form.ReviewWarningNotificationExclusions.toggle(value);
 
+				// show or hide the threshold
+				i.form.ReviewWarningMinThreshold.toggle(value);
+
 			});
 
 			// set change event
@@ -42,6 +45,9 @@
 
 				// show or hide the exclusion table
 				i.form.ReviewWarningNotificationExclusions.toggle(value);
+
+				// show or hide the threshold
+				i.form.ReviewWarningMinThreshold.toggle(value);
 
 				// log event
 				i.common.Analytics.event('Settings', 'Show Review Warning Notifications', value && 'Yes' || 'No');
