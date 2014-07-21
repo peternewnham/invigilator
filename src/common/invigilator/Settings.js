@@ -80,7 +80,9 @@
 			 * Default is to check 60 seconds after installing the extension
 			 * @var {Number}
 			 */
-			nextDataCheck: (+new Date) + (60 * 1000)
+			nextDataCheck: (+new Date) + (60 * 1000),
+
+			newUpdate: false
 
 		},
 

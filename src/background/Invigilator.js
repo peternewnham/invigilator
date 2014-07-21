@@ -46,10 +46,22 @@ chrome.runtime.onInstalled.addListener(function(details) {
 	/*
 	 * Update
 	 */
-	else {
+	else if (details.reason === 'update') {
 
 		// track update event
 		Invigilator.common.Analytics.event('Run', 'Update');
+
+		// set new update browser action badge
+		Invigilator.common.Settings.setLocal('newUpdate', true, function() {
+			chrome.browserAction.setBadgeText({
+				text: 'NEW'
+			});
+		});
+
+		// save and notify update
+		Invigilator.common.Extension.get(chrome.runtime.id, function(extension) {
+			onInstalledCallback(extension);
+		});
 
 	}
 
@@ -83,12 +95,19 @@ chrome.runtime.onStartup.addListener(function() {
 	// set alarms
 	Invigilator.Alarms.setAlarms();
 
+	// set new update action badge
+	Invigilator.common.Settings.getLocal('newUpdate', function(newUpdate) {
+		// only set it if there is a new update
+		if (newUpdate) {
+			chrome.browserAction.setBadgeText({
+				text: 'NEW'
+			});
+		}
+	});
+
 });
 
-/**
- * Whenever an extension is installed/updated
- */
-chrome.management.onInstalled.addListener(function(extensionInfo) {
+var onInstalledCallback = function(extensionInfo) {
 
 	// ignore dev extensions
 	if (!Invigilator.common.Extension.isDev(extensionInfo)) {
@@ -145,7 +164,12 @@ chrome.management.onInstalled.addListener(function(extensionInfo) {
 
 	}
 
-});
+};
+
+/**
+ * Whenever an extension is installed/updated
+ */
+chrome.management.onInstalled.addListener(onInstalledCallback);
 
 /**
  * Whenever an extension is uninstalled

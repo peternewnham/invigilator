@@ -60,4 +60,7 @@ $(function() {
 	// initialise events
 	Invigilator.initEvents();
 
+	// show about tab if there is an update
+	Invigilator.About.checkUpdate();
+
 });
