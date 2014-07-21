@@ -12,7 +12,16 @@
 
 		switch (message.action) {
 
-			// no messages yet
+			/*
+			 * Toggles the enabled/disabled event history logging
+			 */
+			case 'allowEnabledDisabledEvents':
+
+				i.allowEnabledDisabledEvents = message.allow;
+
+				sendResponse();
+
+				break;
 
 		}
 

@@ -207,7 +207,34 @@
 
 			console.log('Extension.uninstall request:', id);
 
-			chrome.management.uninstall(id, null, callback);
+			// temporarily disable enable/disable history logging
+			chrome.runtime.sendMessage({
+				action:	'allowEnabledDisabledEvents',
+				allow:	false
+			}, function() {
+
+				// uninstall extension
+				chrome.management.uninstall(id, null, function() {
+
+					// re-enable enable/disable history logging
+					chrome.runtime.sendMessage({
+						action:	'allowEnabledDisabledEvents',
+						allow:	true
+					});
+
+					var success = true;
+					if (chrome.runtime.lastError) {
+						success = false;
+					}
+
+					// apply callback
+					if (!!callback) {
+						callback(success);
+					}
+
+				});
+
+			});
 
 		},
 
