@@ -399,6 +399,119 @@
 
 			});
 
+		},
+
+		/**
+		 * Removes an item from the store with the specified primary key
+		 * @param {String} storeName	Store name
+		 * @param {String} id			Primary key of record to remove from store
+		 * @param {Function} callback	Callback to apply once item is removed
+		 */
+		removeFromStore: function(storeName, id, callback) {
+
+			var _this = this;
+
+			console.log('IndexedDB.removeFromStore:', storeName, '.', id);
+
+			// get requested store
+			this.getStore(storeName, function(store) {
+
+				// create request
+				var request = store.delete(id);
+
+				// request successful
+				request.onsuccess = function(e) {
+
+					// apply callback
+					if (!!callback) {
+						callback(true);
+					}
+
+				};
+
+				// request error
+				request.onerror = function(e) {
+
+					// log
+					console.error('IndexedDB.removFromStore: Error fetching ', storeName, '.', id);
+					_this.onerror(e);
+
+					// apply callback
+					if (!!callback) {
+						callback(false);
+					}
+
+				}
+
+			});
+
+		},
+
+		/**
+		 * Removes all records in a store from a specific index
+		 * @param {String} storeName	The name of the store to remove from
+		 * @param {String} indexName	The name of the index to remove
+		 * @param {String} indexKey		The key of the index
+		 * @param {Function} callback	Callback function once removing has completed
+		 */
+		removeByIndex: function(storeName, indexName, indexKey, callback) {
+
+			var _this = this;
+
+			console.log('IndexedDB.removeByIndex:', storeName, ', index:', indexName, ', key:', indexKey);
+
+			// get store
+			this.getStore(storeName, function(store) {
+
+				// get index
+				var index = store.index(indexName);
+
+				// make request
+				var indexStore = index.openKeyCursor(IDBKeyRange.only(indexKey));
+
+				// request successful
+				indexStore.onsuccess = function(e) {
+
+					// get current result
+					var cursor = indexStore.result;
+
+					// if there is a result
+					if (cursor) {
+
+						// remove it
+						store.delete(cursor.primaryKey);
+
+						// go to the next one
+						cursor.continue();
+
+					}
+					// no more results
+					else {
+
+						// apply callback if required
+						if (!!callback) {
+							callback(true);
+						}
+
+					}
+
+				};
+
+				// request error
+				indexStore.onerror = function(e) {
+
+					// log
+					console.error('IndexedDB.removeByIndex: Error fetching ', storeName, ', index:', indexName, ', key:', indexKey);
+					_this.onerror(e);
+
+					// apply callback
+					if (!!callback) {
+						callback(false);
+					}
+				}
+
+			});
+
 		}
 
 	};

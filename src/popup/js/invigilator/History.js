@@ -20,6 +20,9 @@
 
 			console.log('History.generate');
 
+			// wipe existing content
+			$('#history').html('');
+
 			/**
 			 * Create filter dropdown
 			 */

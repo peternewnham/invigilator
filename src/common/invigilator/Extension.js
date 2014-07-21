@@ -291,6 +291,23 @@
 
 			});
 
+		},
+
+		/**
+		 * Removes the extension and history from the idb
+		 * @param {String} extensionId	The extension id to remove
+		 * @param {Function} callback	Callback to apply once removed
+		 */
+		remove: function(extensionId, callback) {
+
+			// remove extension
+			i.common.IndexedDB.removeFromStore('extensions', extensionId, function() {
+
+				// remove history
+				i.common.IndexedDB.removeByIndex('history', 'extensionId', extensionId, callback);
+
+			});
+
 		}
 
 	};

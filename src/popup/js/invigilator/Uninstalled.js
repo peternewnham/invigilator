@@ -266,6 +266,21 @@
 			itemHtml += '<a href="https://chrome.google.com/webstore/detail/' + item.id + '" class="btn btn-info">Reinstall <span class="glyphicon glyphicon-play-circle"></span></a>';
 			itemHtml += '</div>';
 
+			// forget
+			itemHtml += '<div class="remove">';
+
+				itemHtml += '<div class="proceed">';
+					itemHtml += '<a href="#" class="btn btn-danger btn-sm action-remove"><span class="glyphicon glyphicon-trash"></span> Remove</a>';
+				itemHtml += '</div>';
+
+				itemHtml += '<div class="confirm hidden">';
+					itemHtml += '<p>Remove this extension and all history?</p>';
+					itemHtml += '<a href="#" class="btn btn-warning btn-xs action-cancel-remove"><span class="glyphicon glyphicon-remove"></span> Cancel</a>';
+					itemHtml += '<a href="#" class="btn btn-danger btn-sm action-confirm-remove"><span class="glyphicon glyphicon-ok"></span> Confirm Removal</a>';
+				itemHtml += '</div>';
+
+			itemHtml += '</div>';
+
 			// close actions
 			itemHtml += '</div>';
 
@@ -282,6 +297,97 @@
 				'<h2>No extensions have been uninstalled yet</h2>'
 			].join(''));
 
+		},
+
+		/**
+		 * Returns the extension id from an element within an item div
+		 * @param {HTMLElement} el	The element to extract the id from
+		 * @returns {string}
+		 */
+		getItemId: function(el) {
+
+			// find closest div with "item" class and get id
+			return $(el).closest('.item').attr('id').replace(/^uninstalled\-/, '');
+
+		},
+
+		/**
+		 * Initialise event listeners
+		 */
+		initEvents: function() {
+
+			var _this = this;
+
+			/*
+			 * Initialise remove
+			 */
+
+			// show confirm
+			$('body').on('click', '.action-remove', function(e) {
+
+				e.preventDefault();
+
+				// track event
+				i.common.Analytics.event('Extension', 'Remove');
+
+				var ct = $(this).closest('.remove');
+				ct.find('.proceed').addClass('hidden');
+				ct.find('.confirm').removeClass('hidden');
+
+			});
+
+			/*
+			 * Cancel uninstall
+			 */
+			$('body').on('click', '.action-cancel-remove', function(e) {
+				e.preventDefault();
+
+				// track event
+				i.common.Analytics.event('Extension', 'Cancel Remove');
+
+				var ct = $(this).closest('.remove');
+				ct.find('.proceed').removeClass('hidden');
+				ct.find('.confirm').addClass('hidden');
+			});
+
+			/*
+			 * Confirm uninstall
+			 */
+			$('body').on('click', '.action-confirm-remove', function(e) {
+				e.preventDefault();
+
+				// track event
+				i.common.Analytics.event('Extension', 'Confirm Remove');
+
+				// get extension id
+				var extensionId = _this.getItemId(this);
+
+				// remove the extension and history from the idb
+				Invigilator.common.Extension.remove(extensionId, function(success) {
+
+					// remove was successful
+					if (success) {
+
+						// fade it out and then remove
+						$('#uninstalled-' + extensionId).fadeOut(500, function() {
+							$('#uninstalled-' + extensionId).remove();
+
+							// add empty message if this was the only uninstalled item
+							if ($('.item', '#uninstalled').length === 0) {
+								_this.addEmpty();
+							}
+
+							// reload history to get rid of the removed extension history
+							i.History.generate();
+
+						});
+
+					}
+
+				});
+
+			});
+
 		}
 
 	};
@@ -289,6 +395,7 @@
 	// initialise
 	$(function() {
 		i.Uninstalled.generate();
+		i.Uninstalled.initEvents();
 	});
 
 })(Invigilator);
