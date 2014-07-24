@@ -130,7 +130,7 @@ var onInstalledCallback = function(extensionInfo) {
 					action = Invigilator.Actions.UPDATED;
 
 					// send update notification
-					i.Notify.update(extension);
+					Invigilator.Notify.update(extension);
 
 				}
 				// extension was previously uninstalled and now reinstalled

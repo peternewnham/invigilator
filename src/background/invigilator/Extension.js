@@ -101,7 +101,7 @@
 										// page error - probably in devmode or server is down
 										else {
 
-											throw Error('Reviews data fetch error:' + this.status);
+											throw Error('Data submit error:' + this.status);
 
 										}
 
