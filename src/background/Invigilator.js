@@ -308,7 +308,7 @@ chrome.management.onDisabled.addListener(function(extensionInfo) {
  */
 window.onerror = function(message, url, linenumber) {
 
-	Invigilator.common.Analytics.event('Error', message, url, linenumber);
+	Invigilator.common.Analytics.event('Error', message, url + ':' + linenumber);
 
 	return false;
 

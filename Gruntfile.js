@@ -131,8 +131,8 @@ module.exports = function (grunt) {
 			build: {
 				options: {
 					mangle: false,
-					compress: true,
-					beautify: false
+					compress: false,
+					beautify: true
 				},
 				files: {
 					'build/background.js': [
