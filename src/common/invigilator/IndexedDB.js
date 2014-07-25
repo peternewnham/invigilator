@@ -240,6 +240,8 @@
 
 			console.log('IndexedDB.getFromStore:', storeName, '.', id);
 
+			// if no id is present then something went wrong
+			// throw an exception and log the stack trace
 			try {
 				if (!id) {
 					console.warn('No ID detected');

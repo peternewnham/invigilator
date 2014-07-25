@@ -129,6 +129,9 @@ var onInstalledCallback = function(extensionInfo) {
 					data.dateUpdated = new Date();
 					action = Invigilator.Actions.UPDATED;
 
+					// set new version number for notification
+					extension.version = chrome.runtime.getManifest().version;
+
 					// send update notification
 					Invigilator.Notify.update(extension);
 

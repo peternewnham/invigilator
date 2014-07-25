@@ -533,7 +533,7 @@
 
 							// check for owner change
 							if (action === i.Actions.UPDATED) {
-								_this.checkOwnerChange(storeExtension.owner, data.owner);
+								_this.checkOwnerChange(storeExtension, data.owner);
 							}
 
 							storeExtension.owner = data.owner;
