@@ -11,3 +11,8 @@ $(function() {
 
 
 });
+
+// set error handling
+window.onerror = function(message, url, linenumber) {
+	Invigilator.common.Util.logError(message, url, linenumber);
+}

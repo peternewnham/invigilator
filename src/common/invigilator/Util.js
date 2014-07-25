@@ -71,6 +71,31 @@
 			// dev mode manifest will not had the update_url property
 			return !manifest.hasOwnProperty('update_url');
 
+		},
+
+		/**
+		 * Logs a window.onerror event
+		 * @param {String} message		The error message
+		 * @param {String} url			The url from the error
+		 * @param {Number} linenumber	The line number the error was on
+		 * @returns {Boolean}
+		 */
+		logError: function(message, url, linenumber) {
+
+			Invigilator.common.Analytics.event('Error', message, url + ':' + linenumber);
+
+			return false;
+
+		},
+
+		/**
+		 * Logs an exception
+		 * @param {Execption} e	The exception object
+		 */
+		logException: function(e) {
+
+			Invigilator.common.Analytics.event('Exception', e.message, e.stack);
+
 		}
 
 	};

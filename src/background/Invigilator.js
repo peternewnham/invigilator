@@ -299,17 +299,7 @@ chrome.management.onDisabled.addListener(function(extensionInfo) {
 
 });
 
-/**
- * Log error messages
- * @param message
- * @param url
- * @param linenumber
- * @returns {boolean}
- */
+// set error handling
 window.onerror = function(message, url, linenumber) {
-
-	Invigilator.common.Analytics.event('Error', message, url + ':' + linenumber);
-
-	return false;
-
-};
+	Invigilator.common.Util.logError(message, url, linenumber);
+}

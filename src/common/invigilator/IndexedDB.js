@@ -171,6 +171,7 @@
 
 					// then get store and apply callback
 					callback(getStore());
+
 				});
 
 			}
@@ -238,6 +239,17 @@
 			var _this = this;
 
 			console.log('IndexedDB.getFromStore:', storeName, '.', id);
+
+			try {
+				if (!id) {
+					console.warn('No ID detected');
+					throw new Error('IndexedDB.getFromStore(' + storeName + ',' + id + ') exception');
+				}
+			}
+			catch (e) {
+				i.common.Util.logException(e);
+				return;
+			}
 
 			// get requested store
 			this.getStore(storeName, function(store) {
