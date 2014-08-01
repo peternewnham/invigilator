@@ -221,7 +221,8 @@
 				' adverts',
 				' adware',
 				' spam',
-				' spyware'
+				' spyware',
+				' sniffer'
 			];
 
 			// try to fetch the webstore page
